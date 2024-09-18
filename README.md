@@ -1,5 +1,5 @@
 # Volunteer Website Application
-**Carter Ung, Nathan Turen, Dion Olumnese, Kelsey Wong**
+**Carter Ung, Nathan Turen, Dion Olumese, Kelsey Wong**
 
 ## Setup 
 To build `node modules` run `npm install` on cloned repository. Next, you can build the application using `npm run build`. 
