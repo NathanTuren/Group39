@@ -1,10 +1,10 @@
 import React from 'react';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, Stack, Link } from '@mui/material';
 import { styled } from '@mui/system';
 
 // Custom background container that stretches across the entire width and height
-const FullWidthBackground = styled('div')({
-  backgroundColor: 'rgb(249, 245, 235)', // Off-white background
+export const FullWidthBackground = styled('div')({
+  backgroundColor: 'rgb(249, 245, 235)',  
   height: '100vh',
   width: '100vw',
   display: 'flex',
@@ -13,7 +13,7 @@ const FullWidthBackground = styled('div')({
 });
 
 // Custom form container without a box or borders
-const FormContainer = styled('div')({
+export const FormContainer = styled('div')({
   maxWidth: '400px',
   width: '100%',
   padding: '0 20px',
@@ -22,12 +22,11 @@ const FormContainer = styled('div')({
 export const Login = () => {
   return (
     <FullWidthBackground>
+      <Stack spacing={5}> 
       <FormContainer>
-        <Typography variant="h5" align="center" gutterBottom>
-          Please enter your Username and Password:
-        </Typography>
+        <Typography variant="h5" align="left" gutterBottom> Log In to VolunteerMatch </Typography>
         <TextField
-          label="Username"
+          label="Username (Email)"
           variant="outlined"
           margin="normal"
           fullWidth
@@ -41,15 +40,18 @@ export const Login = () => {
           fullWidth
           required
         />
+
         <Button
           variant="contained"
-          color="secondary"
           fullWidth
-          style={{ marginTop: '20px' }}
+          sx={{marginTop: "10px", color: 'white', backgroundColor: 'brown' }}
         >
           Sign In
         </Button>
+
       </FormContainer>
+      <Typography variant="h8" align="center"> <Link href="/reset">Forgot Your Password? </Link> </Typography>
+      </Stack>
     </FullWidthBackground>
   );
 };
