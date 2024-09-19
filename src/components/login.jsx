@@ -51,6 +51,15 @@ export const Login = () => {
 
       </FormContainer>
       <Typography variant="h8" align="center"> <Link href="/reset">Forgot Your Password? </Link> </Typography>
+      <Typography variant="h8" align="center"> <Link href="/reset">Don't Have an Account? </Link> </Typography>
+      <Button
+          variant="contained"
+          fullWidth
+          href="/register"
+          sx={{marginTop: "10px", color: 'white', backgroundColor: 'brown' }}
+        >
+          Register Here!
+        </Button>
       </Stack>
     </FullWidthBackground>
   );
