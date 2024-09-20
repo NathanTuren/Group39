@@ -1,5 +1,5 @@
-import React from 'react';
-import { TextField, Button, Typography, Stack, Link } from '@mui/material';
+import React, {useState} from 'react';
+import { TextField, Button, ButtonGroup, Typography, Stack, Link } from '@mui/material';
 import { styled } from '@mui/system';
 
 // Custom background container that stretches across the entire width and height
@@ -20,6 +20,12 @@ export const FormContainer = styled('div')({
 });
 
 export const Login = () => {
+  const [selectedRole, setSelectedRole] = useState(null);
+
+  const setRoleOnClick = (role) => {
+    setSelectedRole(role);
+  };
+
   return (
     <FullWidthBackground>
       <Stack spacing={5}> 
@@ -41,6 +47,32 @@ export const Login = () => {
           required
         />
 
+<ButtonGroup
+          aria-label="Disabled button group"
+          align="center"
+          fullWidth
+          elevation={24}
+        >
+          <Button
+          variant="outlined"
+          fullWidth
+          elevation={24}
+          onClick={() => setRoleOnClick("admin")}
+          sx={{marginTop: "10px", color: selectedRole === "admin" ? 'white' : "brown" , backgroundColor: selectedRole === "admin" ? 'brown' : "white"  }}
+          >
+          Admin
+          </Button>
+          <Button
+          variant="outlined"
+          fullWidth
+          elevation={24}
+          onClick={() => setRoleOnClick("user")}
+          sx={{marginTop: "10px", color: selectedRole === "user" ? 'white' : "brown", backgroundColor: selectedRole === "user" ? 'brown' : "white"  }}
+          >
+          User
+          </Button>
+        </ButtonGroup>
+
         <Button
           variant="contained"
           fullWidth
@@ -51,12 +83,12 @@ export const Login = () => {
 
       </FormContainer>
       <Typography variant="h8" align="center"> <Link href="/reset">Forgot Your Password? </Link> </Typography>
-      <Typography variant="h8" align="center"> <Link href="/reset">Don't Have an Account? </Link> </Typography>
+      <Typography variant="h8" align="center"> Don't Have an Account? </Typography>
       <Button
           variant="contained"
           fullWidth
           href="/register"
-          sx={{marginTop: "10px", color: 'white', backgroundColor: 'brown' }}
+          sx={{ color: 'white', backgroundColor: 'brown' }}
         >
           Register Here!
         </Button>
