@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import { Login} from './components/login';
 import { Register } from './components/register';
 import { ProfileForm } from './components/profileForm';
+import { Navbar } from './components/navBar';
 import { EventManagementForm } from './components/eventSearch';
 import { Welcome} from './components/welcome';
 import {ResetLogin} from './components/forgotPassword';
@@ -10,6 +11,7 @@ import {ResetLogin} from './components/forgotPassword';
 export const App = () => {
     return (
         <BrowserRouter>
+        <Navbar/>
         <Routes>
             <Route path="/" Component={Welcome}/>
             <Route path="/login" Component={Login}/>
