@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl, Chip, Box } from '@mui/material';
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
+// Custom background container
 const FullWidthBackground = styled('div')({
   backgroundColor: 'rgb(249, 245, 235)',
   minHeight: '100vh',
@@ -10,6 +12,7 @@ const FullWidthBackground = styled('div')({
   alignItems: 'center',
 });
 
+// Custom form container
 const FormContainer = styled('div')({
   maxWidth: '600px',
   width: '100%',
@@ -33,6 +36,7 @@ const volunteers = [
 export const VolunteerMatchingForm = () => {
   const [selectedVolunteer, setSelectedVolunteer] = useState('');
   const [volunteerInfo, setVolunteerInfo] = useState(null);
+  const navigate = useNavigate(); // Use the useNavigate hook for redirection
 
   const handleVolunteerChange = (event) => {
     const volunteerId = event.target.value;
@@ -42,7 +46,10 @@ export const VolunteerMatchingForm = () => {
   };
 
   const handleMatchVolunteer = () => {
+    // Placeholder for matching logic (e.g., send the volunteer data to the server to find a matched event)
     console.log('Matching Volunteer:', volunteerInfo);
+    // Redirect to the events catalog page after matching
+    navigate('/events'); // Navigate to the events catalog route
   };
 
   return (

@@ -8,6 +8,8 @@ import { EventManagementForm } from './components/eventSearch';
 import { Welcome} from './components/welcome';
 import {ResetLogin} from './components/forgotPassword';
 import {VolunteerMatchingForm} from './components/volunteerMatchingForm'
+import UserDashboard from './components/userDashboard';
+import EventsCatalog from './components/eventsCatalog';
 
 export const App = () => {
     return (
@@ -21,6 +23,8 @@ export const App = () => {
             <Route path = "/profileForm" Component = {ProfileForm}/>
             <Route path = "/event" Component = {EventManagementForm}/>
             <Route path="/volunteerMatchingForm" Component={VolunteerMatchingForm}/>
+            <Route path="/userDashboard" Component={UserDashboard}/>
+            <Route path="/events" Component={EventsCatalog}/>
         </Routes>
         </BrowserRouter>
     );
