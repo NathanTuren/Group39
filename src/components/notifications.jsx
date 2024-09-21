@@ -31,6 +31,8 @@ export const Notifications = () => {
       >
         <MenuItem onClick={handleClose}>You have a new message</MenuItem> {/* Sample notification */}
         <MenuItem onClick={handleClose}>Reminder: Volunteer event tomorrow at 10 AM</MenuItem>
+        <MenuItem onClick={handleClose}>New Event Assignment: Pet Shelter</MenuItem>
+        <MenuItem onClick={handleClose}>Event Update: Tree Planting Canceled</MenuItem>
       </Menu>
     </>
   );

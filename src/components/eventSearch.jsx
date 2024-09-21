@@ -41,10 +41,11 @@ const FormContainer = styled('div')({
 
 // Skills list
 const skillsList = [
-  'JavaScript',
-  'React',
-  'Node.js',
-  'Python',
+  'Communication',
+  'Teamwork',
+  'Environmental Awareness',
+  'Customer Service',
+  'Willingness to Learn',
   // Add more skills as needed
 ];
 
