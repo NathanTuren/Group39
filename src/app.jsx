@@ -10,7 +10,8 @@ import {ResetLogin} from './components/forgotPassword';
 import {VolunteerMatchingForm} from './components/volunteerMatchingForm'
 import UserDashboard from './components/userDashboard';
 import EventsCatalog from './components/eventsCatalog';
-
+import { VolunteerHistory } from './components/volunteerHistory';
+import { VolunteerHistoryAdmin} from './components/volunteerHistoryAdmin';
 export const App = () => {
     return (
         <BrowserRouter>
@@ -21,10 +22,12 @@ export const App = () => {
             <Route path="/reset" Component={ResetLogin}/>
             <Route path="/register" Component={Register}/>
             <Route path = "/profileForm" Component = {ProfileForm}/>
-            <Route path = "/event" Component = {EventManagementForm}/>
+            <Route path = "/eventManagement" Component = {EventManagementForm}/>
             <Route path="/volunteerMatchingForm" Component={VolunteerMatchingForm}/>
             <Route path="/userDashboard" Component={UserDashboard}/>
             <Route path="/events" Component={EventsCatalog}/>
+            <Route path = "/volunteerHistory" Component = {VolunteerHistory}/>
+            <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
         </Routes>
         </BrowserRouter>
     );

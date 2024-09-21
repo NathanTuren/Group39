@@ -178,9 +178,8 @@ export const EventManagementForm = () => {
           <Button
             type="submit"
             variant="contained"
-            color="secondary"
             fullWidth
-            style={{ marginTop: '20px' }}
+            style={{ marginTop: '20px', backgroundColor: 'brown' }}
           >
             Submit
           </Button>

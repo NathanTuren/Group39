@@ -67,9 +67,8 @@ export const EventsCatalog = () => {
                   </Typography>
                   <Button
                     variant="contained"
-                    color="primary"
                     fullWidth
-                    style={{ marginTop: '15px' }}
+                    style={{ marginTop: '15px', backgroundColor: 'brown' }}
                   >
                     Assign
                   </Button>
