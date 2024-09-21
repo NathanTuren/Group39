@@ -21,7 +21,7 @@ const events = [
     id: 1,
     name: 'Community Cleanup',
     date: '2024-10-05',
-    location: 'Central Park, NY',
+    location: 'San Jose, CA',
     description: 'Help clean up the local park and make a difference in the community.',
   },
   {

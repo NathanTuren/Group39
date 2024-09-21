@@ -37,7 +37,7 @@ const events = [
     id: 3,
     name: 'Local Park Tree Planting',
     date: '2024-11-10',
-    location: 'Central Park, NY',
+    location: 'San Jose, CA',
     description: 'Participate in planting trees to help restore greenery to the local community.',
   },
   {
@@ -51,7 +51,7 @@ const events = [
     id: 5,
     name: 'Animal Shelter Caretaker',
     date: '2024-11-15',
-    location: 'Brooklyn Animal Shelter, NY',
+    location: 'Yosemite Animal Shelter, CA',
     description: 'Take care of pets and help the animal shelter with daily activities.',
   },
   // Add more events as needed

@@ -32,16 +32,6 @@ const FullWidthBackground = styled('div')({
   const events = [
     {
         id: 1,
-        eventName: 'Community Cleanup',
-        eventDescription: 'Help clean up the local park and make a difference in the community.',
-        location: 'Central Park, NY',
-        reqSkills: 'Safety Awareness, Teamwork, Communication, Environmental Knowledge',
-        urgency: 'low',
-        eventDate: '2024-01-05',
-        status: 'Participated'
-      },
-      {
-        id: 2,
         eventName: 'Food Bank Volunteer',
         eventDescription: 'Assist with packaging and distributing food to those in need.',
         location: 'Food Bank, Los Angeles, CA',
@@ -51,7 +41,7 @@ const FullWidthBackground = styled('div')({
         status: 'Participated'
       },
       {
-        id: 3,
+        id: 2,
         eventName: 'Animal Shelter Helper',
         eventDescription: 'Spend time with animals and help with daily tasks at the shelter.',
         location: 'Animal Shelter, San Francisco, CA',
@@ -61,7 +51,7 @@ const FullWidthBackground = styled('div')({
         status: 'Not Participated',
       },
       {
-        id: 4,
+        id: 3,
         eventName: 'Beach Cleanup',
         eventDescription: 'Join to clean the beach and enjoy the sunny weather while making a difference.',
         location: 'Santa Monica Beach, CA',
@@ -71,7 +61,7 @@ const FullWidthBackground = styled('div')({
         status: 'Not Participated',
       },
       {
-        id: 5,
+        id: 4,
         eventName: 'Soup Kitchen Volunteer',
         eventDescription: 'Help prepare and serve meals to those in need.',
         location: 'Downtown LA, CA',
@@ -81,33 +71,13 @@ const FullWidthBackground = styled('div')({
         status: 'Not Participated',
       },
       {
-        id: 6,
-        eventName: 'Local Park Tree Planting',
-        eventDescription: 'Participate in planting trees to help restore greenery to the local community.',
-        location: 'Central Park, NY',
-        reqSkills: 'Environmental Awareness, Basic Physical Fitness, Teamwork',
-        urgency: 'high',
-        eventDate: '2024-11-10',
-        status: 'Not Participated',
-      },
-      {
-        id: 7,
+        id: 5,
         eventName: 'School Supply Distribution',
         eventDescription: 'Distribute school supplies to underprivileged children in local communities.',
         location: 'San Francisco, CA',
         reqSkills: 'Communication, Organization',
         urgency: 'low',
         eventDate: '2024-11-12',
-        status: 'Not Participated',
-      },
-      {
-        id: 8,
-        eventName: 'Animal Shelter Caretaker',
-        eventDescription: 'Take care of pets and help the animal shelter with daily activities.',
-        location: 'Brooklyn Animal Shelter, NY',
-        reqSkills: 'Organization, Teamwork, Communication',
-        urgency: 'low',
-        eventDate: '2024-11-15',
         status: 'Not Participated',
       },
   ];

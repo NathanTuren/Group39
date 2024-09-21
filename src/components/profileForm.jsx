@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl, Chip, Box } from '@mui/material';
+import {
+  TextField,
+  Button,
+  IconButton,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Chip,
+  Box,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { styled } from '@mui/system';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-//npm install @mui/x-date-pickers@latest date-fns@2.x
+
 // Custom background container
 const FullWidthBackground = styled('div')({
   backgroundColor: 'rgb(249, 245, 235)',
@@ -25,21 +37,24 @@ const FormContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  flexGrow: 1, 
-  overflow: 'auto', 
+  flexGrow: 1,
+  overflow: 'auto',
 });
 
 const states = [
   { code: 'CA', name: 'California' },
+  { code: 'FL', name: 'Florida' },
   { code: 'NY', name: 'New York' },
+  { code: 'TX', name: 'Texas' },
   // Add more states as needed
 ];
 
 const skillsList = [
-  'JavaScript',
-  'React',
-  'Node.js',
-  'Python',
+  'Communication',
+  'Teamwork',
+  'Environmental Awareness',
+  'Customer Service',
+  'Willingness to Learn',
   // Add more skills as needed
 ];
 
@@ -53,8 +68,7 @@ export const ProfileForm = () => {
     zipCode: '',
     skills: [],
     preferences: '',
-    availabilityStart: null,
-    availabilityEnd: null,
+    availability: [], // Change to an array to hold multiple dates
   });
 
   const handleChange = (e) => {
@@ -75,6 +89,19 @@ export const ProfileForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form Data Submitted:', formData);
+  };
+
+  const addDatePicker = () => {
+    setFormData((prev) => ({
+      ...prev,
+      availability: [...prev.availability, null],
+    }));
+  };
+
+  const handleDateChange = (index, newValue) => {
+    const newAvailability = [...formData.availability];
+    newAvailability[index] = newValue;
+    setFormData({ ...formData, availability: newAvailability });
   };
 
   return (
@@ -137,7 +164,7 @@ export const ProfileForm = () => {
             >
               {states.map((state) => (
                 <MenuItem key={state.code} value={state.code}>
-                  {state.name}
+                  {state.code}
                 </MenuItem>
               ))}
             </Select>
@@ -151,7 +178,7 @@ export const ProfileForm = () => {
             margin="normal"
             fullWidth
             required
-            inputProps={{ maxLength: 9 }}
+            inputProps={{ maxLength: 9, minLength: 5 }}
           />
           <FormControl fullWidth variant="outlined" margin="normal" required>
             <InputLabel>Skills</InputLabel>
@@ -187,24 +214,21 @@ export const ProfileForm = () => {
             rows={4}
           />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Availability Start"
-              value={formData.availabilityStart}
-              onChange={(newValue) => setFormData({ ...formData, availabilityStart: newValue })}
-              renderInput={(params) => (
-                <TextField {...params} margin="normal" fullWidth required />
-              )}
-              inputFormat="MM/dd/yyyy"
-            />
-            <DatePicker
-              label="Availability End"
-              value={formData.availabilityEnd}
-              onChange={(newValue) => setFormData({ ...formData, availabilityEnd: newValue })}
-              renderInput={(params) => (
-                <TextField {...params} margin="normal" fullWidth required />
-              )}
-              inputFormat="MM/dd/yyyy"
-            />
+            {formData.availability.map((date, index) => (
+              <DatePicker
+                key={index}
+                label="Date Available"
+                value={date}
+                onChange={(newValue) => handleDateChange(index, newValue)}
+                renderInput={(params) => (
+                  <TextField {...params} margin="normal" fullWidth required />
+                )}
+                inputFormat="MM/dd/yyyy"
+              />
+            ))}
+            <IconButton color="primary" onClick={addDatePicker}>
+              <AddIcon />
+            </IconButton>
           </LocalizationProvider>
           <Button
             type="submit"
