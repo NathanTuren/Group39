@@ -28,8 +28,8 @@ const FormContainer = styled('div')({
 });
 
 const volunteers = [
-  { id: 1, name: 'John Doe', skills: ['React', 'JavaScript'], availability: 'Weekdays' },
-  { id: 2, name: 'Jane Smith', skills: ['Node.js', 'Python'], availability: 'Weekends' },
+  { id: 1, name: 'John Doe', skills: ['Communication', 'Environmental Awareness'], availability: 'Weekdays' },
+  { id: 2, name: 'Jane Smith', skills: ['Teamwork', 'Customer Service'], availability: 'Weekends' },
   // Add more volunteers
 ];
 
@@ -84,10 +84,9 @@ export const VolunteerMatchingForm = () => {
 
             <Button
               variant="contained"
-              color="secondary"
               fullWidth
               onClick={handleMatchVolunteer}
-              style={{ marginTop: '20px' }}
+              style={{ marginTop: '20px', backgroundColor: 'brown'}}
             >
               Match Volunteer
             </Button>

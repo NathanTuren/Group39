@@ -24,14 +24,14 @@ const events = [
     name: 'Beach Cleanup',
     date: '2024-11-01',
     location: 'Santa Monica Beach, CA',
-    description: 'Join us to clean the beach and enjoy the sunny weather while making a difference.',
+    description: 'Join to clean the beach and enjoy the sunny weather while making a difference.',
   },
   {
     id: 2,
     name: 'Soup Kitchen Volunteer',
     date: '2024-11-05',
     location: 'Downtown LA, CA',
-    description: 'Help prepare and serve meals to those in need.',
+    description: 'Tasked with helping to prepare and serve meals to those in need.',
   },
   {
     id: 3,
@@ -84,9 +84,8 @@ export const UserDashboard = () => {
                   </Typography>
                   <Button
                     variant="contained"
-                    color="primary"
                     fullWidth
-                    style={{ marginTop: '15px' }}
+                    style={{ marginTop: '15px', backgroundColor: 'brown' }}
                   >
                     Sign Up
                   </Button>
