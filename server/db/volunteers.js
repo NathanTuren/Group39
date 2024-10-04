@@ -1,7 +1,9 @@
 const volunteers = [
     {
         id: 1,
-        fullName: "John Doe",
+        name: "John Doe",
+        email: "john.doe@example.com",
+        password: "password123",
         address1: "123 Main Street",
         address2: "Apt 4B",
         city: "New York",
@@ -9,11 +11,15 @@ const volunteers = [
         zipCode: "10001",
         skills: ["Public Speaking", "Event Planning", "First Aid"],
         preferences: "I prefer volunteering for community events and public speaking opportunities.",
-        availability: ["2024-10-15", "2024-10-22", "2024-11-05"]
+        availability: ["2024-10-15", "2024-10-22", "2024-11-05"],
+        eventParticipation: [4,7],
+        notification: ["Event reminder", "New event invitation"]
     },
     {
         id: 2,
-        fullName: "Jane Smith",
+        name: "Jane Smith",
+        email: "jane.smith@example.com",
+        password: "securepass789",
         address1: "456 Oak Avenue",
         address2: "",
         city: "Los Angeles",
@@ -21,11 +27,15 @@ const volunteers = [
         zipCode: "90005",
         skills: ["Social Media", "Marketing", "Photography"],
         preferences: "Interested in events related to marketing and photography.",
-        availability: ["2024-09-30", "2024-10-10", "2024-11-20"]
+        availability: ["2024-09-30", "2024-10-10", "2024-11-20"],
+        eventParticipation: [1,4, 5, 8],
+        notification: ["Volunteer meeting", "Photography workshop"]
     },
     {
         id: 3,
-        fullName: "Michael Johnson",
+        name: "Michael Johnson",
+        email: "michael.johnson@example.com",
+        password: "mypassword345",
         address1: "789 Pine Street",
         address2: "Suite 12",
         city: "Houston",
@@ -33,11 +43,15 @@ const volunteers = [
         zipCode: "77002",
         skills: ["IT Support", "Web Development", "Graphic Design"],
         preferences: "",
-        availability: ["2024-10-01", "2024-10-05", "2024-12-01"]
+        availability: ["2024-10-01", "2024-10-05", "2024-12-01"],
+        eventParticipation: [3, 7],
+        notification: ["New IT project", "Web development task"]
     },
     {
         id: 4,
-        fullName: "Emily Davis",
+        name: "Emily Davis",
+        email: "emily.davis@example.com",
+        password: "emilypass123",
         address1: "321 Elm Street",
         address2: "",
         city: "Chicago",
@@ -45,11 +59,15 @@ const volunteers = [
         zipCode: "60616",
         skills: ["Cooking", "Teaching", "Childcare"],
         preferences: "I love working with kids and prefer morning shifts.",
-        availability: ["2024-09-25", "2024-10-15", "2024-10-30"]
+        availability: ["2024-09-25", "2024-10-15", "2024-10-30"],
+        eventParticipation: [4, 8],
+        notification: ["Childcare event update", "Morning shift reminder"]
     },
     {
         id: 5,
-        fullName: "David Martinez",
+        name: "David Martinez",
+        email: "david.martinez@example.com",
+        password: "davidsafe456",
         address1: "654 Maple Avenue",
         address2: "Apt 2A",
         city: "Miami",
@@ -57,11 +75,15 @@ const volunteers = [
         zipCode: "33101",
         skills: ["Translation", "Event Coordination", "Fundraising"],
         preferences: "",
-        availability: ["2024-11-10", "2024-11-12", "2024-12-01"]
+        availability: ["2024-11-10", "2024-11-12", "2024-12-01"],
+        eventParticipation: [2, 3],
+        notification: ["Fundraising event", "Event coordination meeting"]
     },
     {
         id: 6,
-        fullName: "Sophia Wilson",
+        name: "Sophia Wilson",
+        email: "sophia.wilson@example.com",
+        password: "sophiapass789",
         address1: "987 Cedar Street",
         address2: "",
         city: "Seattle",
@@ -69,11 +91,15 @@ const volunteers = [
         zipCode: "98104",
         skills: ["Healthcare", "CPR Certification", "First Aid"],
         preferences: "Available for healthcare-related events and emergencies.",
-        availability: ["2024-10-10", "2024-10-20", "2024-11-25"]
+        availability: ["2024-10-10", "2024-10-20", "2024-11-25"],
+        eventParticipation: [9, 10],
+        notification: ["Healthcare event update", "CPR workshop"]
     },
     {
         id: 7,
-        fullName: "Chris Brown",
+        name: "Chris Brown",
+        email: "chris.brown@example.com",
+        password: "chrispassword456",
         address1: "111 Spruce Lane",
         address2: "Building 5",
         city: "Phoenix",
@@ -81,11 +107,15 @@ const volunteers = [
         zipCode: "85001",
         skills: ["Public Relations", "Data Entry", "Logistics"],
         preferences: "Prefer working on projects involving data management.",
-        availability: ["2024-10-15", "2024-11-01", "2024-11-20"]
+        availability: ["2024-10-15", "2024-11-01", "2024-11-20"],
+        eventParticipation: [7],
+        notification: ["Logistics planning", "Data entry task"]
     },
     {
         id: 8,
-        fullName: "Olivia Taylor",
+        name: "Olivia Taylor",
+        email: "olivia.taylor@example.com",
+        password: "oliviapass123",
         address1: "222 Birch Road",
         address2: "Unit 10C",
         city: "Denver",
@@ -93,11 +123,15 @@ const volunteers = [
         zipCode: "80203",
         skills: ["Project Management", "Team Leadership", "Conflict Resolution"],
         preferences: "",
-        availability: ["2024-09-20", "2024-10-05", "2024-11-15"]
+        availability: ["2024-09-20", "2024-10-05", "2024-11-15"],
+        eventParticipation: [3, 4, 5],
+        notification: ["Team leadership workshop", "Conflict resolution meeting"]
     },
     {
         id: 9,
-        fullName: "Ethan White",
+        name: "Ethan White",
+        email: "ethan.white@example.com",
+        password: "ethanpassword678",
         address1: "333 Redwood Blvd",
         address2: "",
         city: "San Francisco",
@@ -105,11 +139,15 @@ const volunteers = [
         zipCode: "94103",
         skills: ["Finance", "Accounting", "Budgeting"],
         preferences: "Interested in finance-related volunteer opportunities.",
-        availability: ["2024-10-01", "2024-10-12", "2024-12-01"]
+        availability: ["2024-10-01", "2024-10-12", "2024-12-01"],
+        eventParticipation: [1, 3],
+        notification: ["Finance event update", "Budgeting task"]
     },
     {
         id: 10,
-        fullName: "Mia Thompson",
+        name: "Mia Thompson",
+        email: "mia.thompson@example.com",
+        password: "miapassword345",
         address1: "444 Palm Drive",
         address2: "",
         city: "Orlando",
@@ -117,8 +155,11 @@ const volunteers = [
         zipCode: "32801",
         skills: ["Animal Care", "Fundraising", "Event Coordination"],
         preferences: "Love working with animals, available for fundraising events.",
-        availability: ["2024-11-05", "2024-11-10", "2024-11-25"]
+        availability: ["2024-11-05", "2024-11-10", "2024-11-25"],
+        eventParticipation: [2, 8],
+        notification: ["Animal care workshop", "Fundraising event update"]
     }
 ];
+
 
 module.exports = volunteers;
