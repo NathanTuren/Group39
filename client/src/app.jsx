@@ -12,22 +12,32 @@ import UserDashboard from './components/userDashboard';
 import EventsCatalog from './components/eventsCatalog';
 import { VolunteerHistory } from './components/volunteerHistory';
 import { VolunteerHistoryAdmin} from './components/volunteerHistoryAdmin';
+import { Outlet } from 'react-router-dom';
+
+const Layout = () => (
+    <>
+      <Navbar />
+      <Outlet /> 
+    </>
+  );
+
 export const App = () => {
     return (
         <BrowserRouter>
-        <Navbar/>
         <Routes>
             <Route path="/" Component={Welcome}/>
             <Route path="/login" Component={Login}/>
             <Route path="/reset" Component={ResetLogin}/>
             <Route path="/register" Component={Register}/>
-            <Route path = "/profileForm" Component = {ProfileForm}/>
-            <Route path = "/eventManagement" Component = {EventManagementForm}/>
-            <Route path="/volunteerMatchingForm" Component={VolunteerMatchingForm}/>
-            <Route path="/userDashboard" Component={UserDashboard}/>
-            <Route path="/events" Component={EventsCatalog}/>
-            <Route path = "/volunteerHistory" Component = {VolunteerHistory}/>
-            <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
+            <Route path = "/" Component = {Layout}>
+                <Route path = "/profileForm" Component = {ProfileForm}/>
+                <Route path = "/eventManagement" Component = {EventManagementForm}/>
+                <Route path="/volunteerMatchingForm" Component={VolunteerMatchingForm}/>
+                <Route path="/userDashboard" Component={UserDashboard}/>
+                <Route path="/events" Component={EventsCatalog}/>
+                <Route path = "/volunteerHistory" Component = {VolunteerHistory}/>
+                <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
+            </Route>
         </Routes>
         </BrowserRouter>
     );
