@@ -1,4 +1,4 @@
-const events = [
+let events = [
     {
         id: 1,
         eventName: "Tech Conference 2024",
@@ -6,7 +6,8 @@ const events = [
         location: "San Francisco, CA - Moscone Center",
         requiredSkills: ["Public Speaking", "Networking", "Technical Knowledge", "Event Management"],
         urgency: "High",
-        eventDate: "2024-10-15"
+        eventDate: "2024-10-15",
+        adminID: 1
     },
     {
         id: 2,
@@ -15,7 +16,8 @@ const events = [
         location: "Austin, TX - Zilker Park",
         requiredSkills: ["Stage Management", "Sound Engineering", "Artist Coordination", "Security"],
         urgency: "Medium",
-        eventDate: "2024-09-25"
+        eventDate: "2024-09-25",
+        adminID: 1
     },
     {
         id: 3,
@@ -24,7 +26,8 @@ const events = [
         location: "New York, NY - WeWork Office",
         requiredSkills: ["Pitch Preparation", "Public Speaking", "Investor Relations", "Event Coordination"],
         urgency: "Low",
-        eventDate: "2024-11-02"
+        eventDate: "2024-11-02",
+        adminID: 1
     },
     {
         id: 4,
@@ -33,7 +36,8 @@ const events = [
         location: "Sedona, AZ - Wellness Resort",
         requiredSkills: ["Yoga Instruction", "Meditation Guidance", "Event Planning", "Hospitality"],
         urgency: "Medium",
-        eventDate: "2024-10-20"
+        eventDate: "2024-10-20",
+        adminID: 3
     },
     {
         id: 5,
@@ -42,7 +46,8 @@ const events = [
         location: "Los Angeles, CA - Downtown Art Gallery",
         requiredSkills: ["Art Curation", "Event Promotion", "Sales Management", "Artist Coordination"],
         urgency: "High",
-        eventDate: "2024-08-14"
+        eventDate: "2024-08-14",
+        adminID: 3
     },
     {
         id: 6,
@@ -51,7 +56,8 @@ const events = [
         location: "Chicago, IL - Tech Hub",
         requiredSkills: ["JavaScript", "HTML/CSS", "React", "Node.js", "Mentorship"],
         urgency: "High",
-        eventDate: "2024-12-01"
+        eventDate: "2024-12-01",
+        adminID: 3
     },
     {
         id: 7,
@@ -60,7 +66,8 @@ const events = [
         location: "Seattle, WA - Community Library",
         requiredSkills: ["Discussion Facilitation", "Event Coordination", "Literary Analysis"],
         urgency: "Low",
-        eventDate: "2024-09-30"
+        eventDate: "2024-09-30",
+        adminID: 7
     },
     {
         id: 8,
@@ -69,7 +76,8 @@ const events = [
         location: "Boston, MA - Convention Center",
         requiredSkills: ["Recruitment", "Networking", "Event Planning", "Logistics"],
         urgency: "High",
-        eventDate: "2024-10-05"
+        eventDate: "2024-10-05",
+        adminID: 7
     },
     {
         id: 9,
@@ -78,7 +86,8 @@ const events = [
         location: "Los Angeles, CA - Marketing HQ",
         requiredSkills: ["SEO", "Content Marketing", "Social Media Management", "Email Marketing"],
         urgency: "Medium",
-        eventDate: "2024-10-10"
+        eventDate: "2024-10-10",
+        adminID: 7
     },
     {
         id: 10,
@@ -87,8 +96,10 @@ const events = [
         location: "Denver, CO - Outdoor Park",
         requiredSkills: ["Fitness Training", "Health & Nutrition", "Group Motivation", "Safety Supervision"],
         urgency: "Medium",
-        eventDate: "2024-11-10"
+        eventDate: "2024-11-10",
+        adminID: 9
     }
 ];
 
 module.exports = events;
+

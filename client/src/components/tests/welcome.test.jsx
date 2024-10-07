@@ -4,7 +4,7 @@ import '@testing-library/jest-dom'
 import Welcome from '../Welcome';  // Adjust path if necessary
 
 describe('Welcome Component', () => {
-  test('renders the Create an Account button', () => {
+  it('renders the Create an Account button', () => {
     render(<Welcome />);
     
     // Check if the Create an Account button is rendered with the correct text
@@ -12,7 +12,7 @@ describe('Welcome Component', () => {
     expect(createAccountButton).toBeInTheDocument();
   });
 
-  test('renders the Login button', () => {
+  it('renders the Login button', () => {
     render(<Welcome />);
 
     // Check if the Login button is rendered with the correct text
@@ -20,7 +20,7 @@ describe('Welcome Component', () => {
     expect(loginButton).toBeInTheDocument();
   });
 
-  test('Create an Account button links to /register', () => {
+  it('Create an Account button links to /register', () => {
     render(<Welcome />);
 
     // Check if the Create an Account button has the correct href attribute
@@ -28,7 +28,7 @@ describe('Welcome Component', () => {
     expect(createAccountButton.closest('a')).toHaveAttribute('href', '/register');
   });
 
-  test('Login button links to /login', () => {
+  it('Login button links to /login', () => {
     render(<Welcome />);
 
     // Check if the Login button has the correct href attribute
