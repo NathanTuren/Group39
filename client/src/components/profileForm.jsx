@@ -41,12 +41,12 @@ const FormContainer = styled('div')({
   overflow: 'auto',
 });
 
+// States and skills
 const states = [
   { code: 'CA', name: 'California' },
   { code: 'FL', name: 'Florida' },
   { code: 'NY', name: 'New York' },
   { code: 'TX', name: 'Texas' },
-  // Add more states as needed
 ];
 
 const skillsList = [
@@ -55,7 +55,6 @@ const skillsList = [
   'Environmental Awareness',
   'Customer Service',
   'Willingness to Learn',
-  // Add more skills as needed
 ];
 
 export const ProfileForm = () => {
@@ -68,7 +67,7 @@ export const ProfileForm = () => {
     zipCode: '',
     skills: [],
     preferences: '',
-    availability: [], // Change to an array to hold multiple dates
+    availability: [],
   });
 
   const handleChange = (e) => {
@@ -86,9 +85,28 @@ export const ProfileForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
+    
+    try {
+      const response = await fetch('http://localhost:4000/saveProfile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Profile saved:', result);
+        // Optionally reset the form or show a success message
+      } else {
+        console.error('Error saving profile:', await response.json());
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
   };
 
   const addDatePicker = () => {

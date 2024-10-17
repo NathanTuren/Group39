@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const volunteers = require('../db/volunteers')
 const events = require('../db/events')
+const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path')
 
@@ -86,6 +87,62 @@ router.post('/volunteerRegister', (req, res) => {
         return res.status(201).json({ message: "Registration Successful", volunteer: newVolunteer });
     });
 
+});
+// POST request for saving profile data
+router.post('/saveProfile', (req, res) => {
+    console.log('Received profile:', req.body); // Log the incoming profile data
+    console.log('Current profiles:', profiles); // Log current profiles array
+
+    const newProfile = req.body;
+
+    // Ensure profiles is an array
+    if (!Array.isArray(profiles)) {
+        return res.status(500).json({ message: "Profiles is not initialized correctly." });
+    }
+
+    // Generate a new ID
+    const newId = profiles.length ? Math.max(...profiles.map(p => p.id)) + 1 : 1;
+
+    // Add ID to the new profile
+    newProfile.id = newId;
+
+    // Add the new profile to the array
+    profiles.push(newProfile);
+
+    // Write the updated profiles array to the profileData.js file
+    const filePath = path.join(__dirname, '../db/profileData.js');
+    const fileContent = `let profiles = ${JSON.stringify(profiles, null, 4)};\n\nmodule.exports = profiles;`;
+
+    fs.writeFile(filePath, fileContent, (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Error saving profile data" });
+        }
+        return res.status(201).json({ message: "Profile data saved successfully", profile: newProfile });
+    });
+});
+// POST request for saving event data
+router.post('/saveEvent', (req, res) => {
+    const newEvent = req.body;
+
+    // Generate a new ID
+    const newId = events.length ? Math.max(...events.map(e => e.id)) + 1 : 1;
+
+    // Add ID to the new event
+    newEvent.id = newId;
+
+    // Add the new event to the array
+    events.push(newEvent);
+
+    // Write the updated events array to the events.js file
+    const filePath = path.join(__dirname, '../db/events.js');
+    const fileContent = `let events = ${JSON.stringify(events, null, 4)};\n\nmodule.exports = events;`;
+
+    fs.writeFile(filePath, fileContent, (err) => {
+        if (err) {
+            return res.status(500).json({ message: "Error saving event data" });
+        }
+        return res.status(201).json({ message: "Event data saved successfully", event: newEvent });
+    });
 });
 
 module.exports = router
