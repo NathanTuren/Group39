@@ -46,7 +46,6 @@ const skillsList = [
   'Environmental Awareness',
   'Customer Service',
   'Willingness to Learn',
-  // Add more skills as needed
 ];
 
 // Urgency options
@@ -72,9 +71,7 @@ export const EventManagementForm = () => {
   };
 
   const handleSkillsChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+    const { target: { value } } = event;
     setFormData({
       ...formData,
       requiredSkills: typeof value === 'string' ? value.split(',') : value,
@@ -83,7 +80,31 @@ export const EventManagementForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Event Data Submitted:', formData);
+    
+    // Send a POST request to save the event
+    fetch('http://localhost:4000/saveEvent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      // Optionally, you can reset the form or show a success message here
+      setFormData({
+        eventName: '',
+        eventDescription: '',
+        location: '',
+        requiredSkills: [],
+        urgency: '',
+        eventDate: null,
+      });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   };
 
   return (
