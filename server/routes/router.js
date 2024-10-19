@@ -90,24 +90,25 @@ router.post('/volunteerRegister', (req, res) => {
 });
 // POST request for saving profile data
 router.post('/saveProfile', (req, res) => {
-    console.log('Received profile:', req.body); // Log the incoming profile data
-    console.log('Current profiles:', profiles); // Log current profiles array
+    console.log('Received profile:', req.body);
+    console.log('Current profiles:', profiles);
+    //const profileData = req.body;
 
-    const newProfile = req.body;
-
+    if (profiles === undefined || profiles === null) {
+        return res.status(500).json({ message: 'Profiles is not initialized correctly.' });
+    }
     // Ensure profiles is an array
     if (!Array.isArray(profiles)) {
         return res.status(500).json({ message: "Profiles is not initialized correctly." });
     }
 
-    // Generate a new ID
+    const newProfile = req.body;
+    
+    // Move newId initialization to this point
     const newId = profiles.length ? Math.max(...profiles.map(p => p.id)) + 1 : 1;
+    newProfile.id = newId; // Add ID to the new profile
 
-    // Add ID to the new profile
-    newProfile.id = newId;
-
-    // Add the new profile to the array
-    profiles.push(newProfile);
+    profiles.push(newProfile); // Add the new profile to the array
 
     // Write the updated profiles array to the profileData.js file
     const filePath = path.join(__dirname, '../db/profileData.js');
@@ -120,6 +121,7 @@ router.post('/saveProfile', (req, res) => {
         return res.status(201).json({ message: "Profile data saved successfully", profile: newProfile });
     });
 });
+
 // POST request for saving event data
 router.post('/saveEvent', (req, res) => {
     const newEvent = req.body;
