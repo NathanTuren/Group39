@@ -165,6 +165,30 @@ let events = [
         "date": "2024-11-01",
         "location": "City Park",
         "id": 12
+    },
+    {
+        "title": "Community Service Day",
+        "date": "2024-11-01",
+        "location": "City Park",
+        "id": 13
+    },
+    {
+        "title": "Community Service Day",
+        "date": "2024-11-01",
+        "location": "City Park",
+        "id": 14
+    },
+    {
+        "title": "Community Service Day",
+        "date": "2024-11-01",
+        "location": "City Park",
+        "id": 15
+    },
+    {
+        "title": "Community Service Day",
+        "date": "2024-11-01",
+        "location": "City Park",
+        "id": 16
     }
 ];
 
