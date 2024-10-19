@@ -17,6 +17,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+
 // Custom background container
 const FullWidthBackground = styled('div')({
   backgroundColor: 'rgb(249, 245, 235)',
@@ -76,9 +77,7 @@ export const ProfileForm = () => {
   };
 
   const handleSkillsChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+    const { target: { value } } = event;
     setFormData({
       ...formData,
       skills: typeof value === 'string' ? value.split(',') : value,
@@ -87,7 +86,6 @@ export const ProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
       const response = await fetch('http://localhost:4000/saveProfile', {
         method: 'POST',
@@ -100,7 +98,6 @@ export const ProfileForm = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Profile saved:', result);
-        // Optionally reset the form or show a success message
       } else {
         console.error('Error saving profile:', await response.json());
       }
@@ -130,6 +127,7 @@ export const ProfileForm = () => {
         </Typography>
         <form onSubmit={handleSubmit} style={{ width: '100%' }}>
           <TextField
+            id="fullName"
             label="Full Name"
             name="fullName"
             value={formData.fullName}
@@ -141,6 +139,7 @@ export const ProfileForm = () => {
             inputProps={{ maxLength: 50 }}
           />
           <TextField
+            id="address1"
             label="Address 1"
             name="address1"
             value={formData.address1}
@@ -152,6 +151,7 @@ export const ProfileForm = () => {
             inputProps={{ maxLength: 100 }}
           />
           <TextField
+            id="address2"
             label="Address 2"
             name="address2"
             value={formData.address2}
@@ -162,6 +162,7 @@ export const ProfileForm = () => {
             inputProps={{ maxLength: 100 }}
           />
           <TextField
+            id="city"
             label="City"
             name="city"
             value={formData.city}
@@ -173,21 +174,24 @@ export const ProfileForm = () => {
             inputProps={{ maxLength: 100 }}
           />
           <FormControl fullWidth variant="outlined" margin="normal" required>
-            <InputLabel>State</InputLabel>
+            <InputLabel id="state-label">State</InputLabel>
             <Select
+              id="state"
               name="state"
               value={formData.state}
               onChange={handleChange}
               label="State"
+              labelId="state-label"
             >
               {states.map((state) => (
                 <MenuItem key={state.code} value={state.code}>
-                  {state.code}
+                  {state.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
           <TextField
+            id="zipCode"
             label="Zip Code"
             name="zipCode"
             value={formData.zipCode}
@@ -199,28 +203,33 @@ export const ProfileForm = () => {
             inputProps={{ maxLength: 9, minLength: 5 }}
           />
           <FormControl fullWidth variant="outlined" margin="normal" required>
-            <InputLabel>Skills</InputLabel>
-            <Select
-              multiple
-              name="skills"
-              value={formData.skills}
-              onChange={handleSkillsChange}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  ))}
-                </Box>
-              )}
-            >
-              {skillsList.map((skill) => (
-                <MenuItem key={skill} value={skill}>
-                  {skill}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+  <InputLabel id="skills-label">Skills</InputLabel>
+  <Select
+    id="skills"
+    multiple
+    name="skills"
+    value={formData.skills}
+    onChange={handleSkillsChange}
+    label="Skills"
+    labelId="skills-label"
+    renderValue={(selected) => (
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+        {selected.map((value) => (
+          <Chip key={value} label={value} />
+        ))}
+      </Box>
+    )}
+  >
+    {skillsList.map((skill) => (
+      <MenuItem key={skill} value={skill} role="option" aria-label={skill}>
+        {skill}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
+
           <TextField
+            id="preferences"
             label="Preferences"
             name="preferences"
             value={formData.preferences}
@@ -231,23 +240,21 @@ export const ProfileForm = () => {
             multiline
             rows={4}
           />
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            {formData.availability.map((date, index) => (
-              <DatePicker
-                key={index}
-                label="Date Available"
-                value={date}
-                onChange={(newValue) => handleDateChange(index, newValue)}
-                renderInput={(params) => (
-                  <TextField {...params} margin="normal" fullWidth required />
-                )}
-                inputFormat="MM/dd/yyyy"
-              />
-            ))}
-            <IconButton color="primary" onClick={addDatePicker}>
-              <AddIcon />
-            </IconButton>
-          </LocalizationProvider>
+<LocalizationProvider dateAdapter={AdapterDateFns}>
+  {formData.availability.map((date, index) => (
+    <DatePicker
+  key={index}
+  label="Date Available"
+  value={date}
+  onChange={(newValue) => handleDateChange(index, newValue)}
+  slots={{ textField: TextField }} // Use slots prop for TextField
+  inputFormat="MM/dd/yyyy"
+/>
+  ))}
+  <IconButton color="primary" onClick={addDatePicker} aria-label="Add date">
+    <AddIcon />
+  </IconButton>
+</LocalizationProvider>
           <Button
             type="submit"
             variant="contained"

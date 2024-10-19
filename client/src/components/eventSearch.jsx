@@ -80,7 +80,7 @@ export const EventManagementForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Send a POST request to save the event
     fetch('http://localhost:4000/saveEvent', {
       method: 'POST',
@@ -150,8 +150,9 @@ export const EventManagementForm = () => {
             required
           />
           <FormControl fullWidth variant="outlined" margin="normal" required>
-            <InputLabel>Required Skills</InputLabel>
+            <InputLabel id="required-skills-label">Required Skills</InputLabel>
             <Select
+              labelId="required-skills-label"
               multiple
               name="requiredSkills"
               value={formData.requiredSkills}
@@ -171,13 +172,14 @@ export const EventManagementForm = () => {
               ))}
             </Select>
           </FormControl>
+
           <FormControl fullWidth variant="outlined" margin="normal" required>
-            <InputLabel>Urgency</InputLabel>
+            <InputLabel id="urgency-label">Urgency</InputLabel>
             <Select
+              labelId="urgency-label"
               name="urgency"
               value={formData.urgency}
-              onChange={handleChange}
-              label="Urgency"
+              onChange={(event) => setFormData({ ...formData, urgency: event.target.value })}
             >
               {urgencyOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -186,14 +188,17 @@ export const EventManagementForm = () => {
               ))}
             </Select>
           </FormControl>
+
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Event Date"
               value={formData.eventDate}
               onChange={(newValue) => setFormData({ ...formData, eventDate: newValue })}
-              renderInput={(params) => (
-                <TextField {...params} margin="normal" fullWidth required />
-              )}
+              slots={{
+                textField: (params) => (
+                  <TextField {...params} margin="normal" fullWidth required />
+                ),
+              }}
               inputFormat="MM/dd/yyyy"
             />
           </LocalizationProvider>
