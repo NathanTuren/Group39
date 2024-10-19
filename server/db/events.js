@@ -159,6 +159,12 @@ let events = [
         "urgency": "low",
         "eventDate": "2024-10-30T05:00:00.000Z",
         "id": 11
+    },
+    {
+        "title": "Community Service Day",
+        "date": "2024-11-01",
+        "location": "City Park",
+        "id": 12
     }
 ];
 
