@@ -68,7 +68,7 @@ export const ProfileForm = () => {
     zipCode: '',
     skills: [],
     preferences: '',
-    availability: [], // Change to an array to hold multiple dates
+    availability: [],
   });
 
   const handleChange = (e) => {

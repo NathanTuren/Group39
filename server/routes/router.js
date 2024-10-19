@@ -10,6 +10,14 @@ router.get('/volunteers', (req, res) => {
     res.send(volunteers)
 })
 
+router.get('/volunteers/:id', (req, res) => {
+    const volunteerId = parseInt(req.params.id, 10);
+    const volunteer = volunteers.find(v => v.id === volunteerId);
+    if(volunteer){
+        res.send(volunteer);
+    }
+})
+
 router.get('/events', (req, res) => {
     events
     res.send(events)

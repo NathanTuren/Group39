@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom'
-import Welcome from '../Welcome';  // Adjust path if necessary
+import Welcome from '../welcome';  // Adjust path if necessary
 
 describe('Welcome Component', () => {
   it('renders the Create an Account button', () => {

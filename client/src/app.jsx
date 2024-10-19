@@ -35,7 +35,7 @@ export const App = () => {
                 <Route path="/volunteerMatchingForm" Component={VolunteerMatchingForm}/>
                 <Route path="/userDashboard" Component={UserDashboard}/>
                 <Route path="/events" Component={EventsCatalog}/>
-                <Route path = "/volunteerHistory" Component = {VolunteerHistory}/>
+                <Route path = "/volunteerHistory/:id" Component = {VolunteerHistory}/>
                 <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
             </Route>
         </Routes>

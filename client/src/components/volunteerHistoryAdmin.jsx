@@ -1,14 +1,6 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TablePagination,
   Typography
 } from '@mui/material';
 import { Card, CardContent, Grid, Button } from '@mui/material';
@@ -17,40 +9,41 @@ import { styled } from '@mui/system';
 
 // Full width background that covers the screen
 const FullWidthBackground = styled('div')({
-    backgroundColor: 'rgb(249, 245, 235)', // Off-white background to match the style
-    height: '100vh',
-    width: '100vw',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  });
-  
-  // Form container without a box, similar to the login style
-  const FormContainer = styled('div')({
-    maxWidth: '1200px',
-    width: '100%',
-    padding: '0 20px',
-  });
+  backgroundColor: 'rgb(249, 245, 235)', // Off-white background to match the style
+  height: '100vh',
+  width: '100vw',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
 
-  const EventCatalogContainer = styled('div')({
-    maxWidth: '1200px',
-    width: '100%',
-  });
+// Form container without a box, similar to the login style
+const EventCatalogContainer = styled('div')({
+  maxWidth: '1200px',
+  width: '100%',
+});
 
-  export const VolunteerHistoryAdmin = () => {
-    // Hardcoded list of volunteers
-    const volunteers = [
-      { id: 1, name: 'Alice Johnson', email: 'alice@example.com', phoneNumber: '281-494-9999' },
-      { id: 2, name: 'Bob Smith', email: 'bob@example.com', phoneNumber: '832-999-2222' },
-      { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', phoneNumber: '123-232-5255' },
-      { id: 4, name: 'Diana Prince', email: 'diana@example.com', phoneNumber: '828-192-4226' },
-      { id: 5, name: 'Ellie Gold', email: 'ellie@example.com', phoneNumber: '352-632-0302' },
-      { id: 6, name: 'Ford Texan', email: 'ford@example.com', phoneNumber: '593-762-1592' },
-    ];
-  
-    return (
-        <FullWidthBackground>
-                  <EventCatalogContainer>
+export const VolunteerHistoryAdmin = () => {
+  const [volunteers, getVolunteerData] = useState([]);
+  // Fetch volunteers from the backend using Node.js server (localhost:4000)
+  const fetchVolunteers = async () => {
+    try {
+      const res = await fetch('http://localhost:4000/volunteers'); // fetch the appropriate API in this case we do a get to /volunteers
+      const data = await res.json();
+      getVolunteerData(data);
+    } catch (err) {
+      console.error('Error fetching volunteer data:', err);
+    }
+  };
+
+  // We employ a useEffect to render all the data on loading of the page
+  useEffect(() => {
+    fetchVolunteers();
+  }, []);
+
+  return (
+    <FullWidthBackground>
+      <EventCatalogContainer>
         <Typography variant="h4" align="center" gutterBottom>
           Volunteer History Log
         </Typography>
@@ -66,12 +59,10 @@ const FullWidthBackground = styled('div')({
                   <Typography variant="body2" color="textSecondary">
                     <strong>Email:</strong> {volunteer.email}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    <strong>Phone Number:</strong> {volunteer.phoneNumber}
-                  </Typography>
                   <Button
                     variant="contained"
                     fullWidth
+                    href={`/volunteerHistory/${volunteer.id}`}
                     style={{ marginTop: '15px', backgroundColor: 'brown' }}
                   >
                     Volunteer History
@@ -82,6 +73,6 @@ const FullWidthBackground = styled('div')({
           ))}
         </Grid>
       </EventCatalogContainer>
-        </FullWidthBackground>
-    );
-  };
+    </FullWidthBackground>
+  );
+};
