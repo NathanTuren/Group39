@@ -6,8 +6,8 @@ let volunteers = [
         "password": "password123",
         "address1": "123 Main Street",
         "address2": "Apt 4B",
-        "city": "New York",
-        "state": "NY",
+        "city": "San Francisco",
+        "state": "CA",
         "zipCode": "10001",
         "skills": [
             "Public Speaking",
@@ -18,7 +18,7 @@ let volunteers = [
         "availability": [
             "2024-10-15",
             "2024-10-22",
-            "2024-11-05"
+            "2024-11-05",
         ],
         "eventParticipation": [
             4,

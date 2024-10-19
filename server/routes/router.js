@@ -5,8 +5,12 @@ const events = require('../db/events')
 const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path')
+<<<<<<< Updated upstream
 
 
+=======
+const matchVolunteerToEvents = require('../services/volunteerMatching'); 
+>>>>>>> Stashed changes
 router.get('/volunteers', (req, res) => {
     volunteers
     res.send(volunteers)
@@ -138,6 +142,7 @@ router.post('/saveProfile', (req, res) => {
     });
 });
 
+<<<<<<< Updated upstream
 
 // POST request for saving event data
 router.post('/saveEvent', (req, res) => {
@@ -172,3 +177,75 @@ router.post('/saveEvent', (req, res) => {
 
 module.exports = router
 
+=======
+router.get('/volunteer/:id/match-events', (req, res) => {
+    const volunteerID = parseInt(req.params.id);
+
+    const volunteer = volunteers.find(v => v.id === volunteerID);
+
+    if (!volunteer) {
+        return res.status(404).json({ message: `Volunteer with ID ${volunteerID} not found.` });
+    }
+    console.log(volunteer)
+    const matchedEvents = matchVolunteerToEvents(volunteer, events);
+
+    return res.json({
+        volunteerName: volunteer.name,
+        matchingEvents: matchedEvents
+    });
+});
+
+const { notifyVolunteersAssignedToEvent } = require('../services/volunteerMatching');
+
+// Route to assign volunteer to an event and notify a volunteer
+router.post('/volunteer/:volunteerID/notify', (req, res) => {
+    const eventID = parseInt(req.params.eventId);
+    const event = events.find(e => e.id === eventID);
+
+    if (!event) {
+        return res.status(404).json({ message: `Event with ID ${eventID} not found.` });
+    }
+
+    const notifiedVolunteers = notifyVolunteersAssignedToEvent(volunteers, event, 'assignment');
+
+    return res.status(200).json({
+        message: `Assignment notifications have been sent to all volunteers for the event: ${event.eventName}.`,
+        notifiedVolunteers: notifiedVolunteers
+    });
+});
+
+//route for notifications for event updates
+router.post('/event/:eventId/update-notification', (req, res) => {
+    const eventID = parseInt(req.params.eventId);
+    const event = events.find(e => e.id === eventID);
+
+    if (!event) {
+        return res.status(404).json({ message: `Event with ID ${eventID} not found.` });
+    }
+
+    const notifiedVolunteers = notifyVolunteersAssignedToEvent(volunteers, event, 'update');
+
+    return res.status(200).json({
+        message: `Update notifications have been sent to all volunteers assigned to the event.`,
+        notifiedVolunteers: notifiedVolunteers
+    });
+});
+
+//route for notifications for event reminders
+router.post('/event/:eventId/send-reminder', (req, res) => {
+    const eventID = parseInt(req.params.eventId);
+    const event = events.find(e => e.id === eventID);
+
+    if (!event) {
+        return res.status(404).json({ message: `Event with ID ${eventID} not found.` });
+    }
+
+    const notifiedVolunteers = notifyVolunteersAssignedToEvent(volunteers, event, 'reminder');
+
+    return res.status(200).json({
+        message: `Reminder notifications have been sent to all volunteers assigned to the event.`,
+        notifiedVolunteers: notifiedVolunteers
+    });
+});
+module.exports = router
+>>>>>>> Stashed changes
