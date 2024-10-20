@@ -20,19 +20,24 @@ app.use('/', router);
 // Mock data for tests
 let profiles = []; // This will mock the profiles array
 let events = []; // This will mock the events array
+let volunteers = []; // This will mock the volunteers array
 
 
 // Mock the profileData.js and events.js file paths
 const profileFilePath = path.join(__dirname, '../db/profileData.js');
 const eventFilePath = path.join(__dirname, '../db/events.js');
+const volunteerFilePath = path.join(__dirname, '../db/volunteers.js');
 
 
 // Clean up the mock data files before each test
 beforeEach(() => {
     profiles = []; // Reset profiles
     events = []; // Reset events
+    volunteers = []; // Reset volunteers
     fs.writeFileSync(profileFilePath, 'let profiles = [];\n\nmodule.exports = profiles;');
     fs.writeFileSync(eventFilePath, 'let events = [];\n\nmodule.exports = events;');
+    fs.writeFileSync(volunteerFilePath, 'let volunteers = [];\n\nmodule.exports = volunteers;');
+
 });
 
 
@@ -80,6 +85,86 @@ describe('API Routes', () => {
        
     });
 
+    describe('POST /volunteerRegister', () => {
+        it('should register a new user', async () => {
+            const profileData = {
+                id: 1,
+                email: 'newtest@example.com',
+                password: 'password12345',
+            };
+
+
+            const response = await request(app)
+                .post('/volunteerRegister')
+                .send(profileData);
+
+
+            expect(response.status).to.equal(201);
+            expect(response.body.message).to.equal('Registration Successful');
+        });
+        it('it should reject the post because of an existing user', async () => {
+            const profileData = {
+                id: 1,
+                email: 'newtest@example.com',
+                password: 'password12345',
+            };
+
+
+            const response = await request(app)
+                .post('/volunteerRegister')
+                .send(profileData);
+
+
+            expect(response.status).to.equal(409);
+            expect(response.body.message).to.equal('Email already exists.');
+        });
+    })
+
+    describe('test GET APIs', () => {
+        it('should test GET API for volunteers ', async () => {
+            const response = await request(app).get('/volunteers');
+            expect(response.status).to.equal(200); 
+            expect(response.body).to.be.an('array');
+            expect(response.body[0]).to.deep.equal({
+                id: null,
+                name: "", 
+                email: "newtest@example.com",
+                password: "password12345",
+                address1: "",
+                address2: "",
+                city: "",
+                state: "",
+                zipCode: "",
+                skills: [],
+                preferences: "",
+                availability:[],
+                eventParticipation:[],
+                notification:  [],
+                isAdmin:  false
+            }); 
+        });
+
+        it('should test GET API for events ', async () => {
+            const response = await request(app).get('/events');
+            expect(response.status).to.equal(200); // Expect success
+            expect(response.body).to.be.an('array');
+            expect(response.body[0]).to.deep.equal(    {
+                "id": 1,
+                "eventName": "Tech Conference 2024",
+                "eventDescription": "A conference bringing together technology professionals from around the globe to discuss the latest trends and innovations in the industry.",
+                "location": "San Francisco, CA - Moscone Center",
+                "requiredSkills": [
+                    "Public Speaking",
+                    "Networking",
+                    "Technical Knowledge",
+                    "Event Management"
+                ],
+                "urgency": "High",
+                "eventDate": "2024-10-15",
+                "adminID": 1
+            }); 
+        });
+    })
 
     describe('POST /saveEvent', () => {
         it('should save a new event and return success message', async () => {
