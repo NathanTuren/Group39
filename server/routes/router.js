@@ -5,12 +5,7 @@ const events = require('../db/events')
 const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path')
-<<<<<<< Updated upstream
-
-
-=======
 const matchVolunteerToEvents = require('../services/volunteerMatching'); 
->>>>>>> Stashed changes
 router.get('/volunteers', (req, res) => {
     volunteers
     res.send(volunteers)
@@ -142,7 +137,6 @@ router.post('/saveProfile', (req, res) => {
     });
 });
 
-<<<<<<< Updated upstream
 
 // POST request for saving event data
 router.post('/saveEvent', (req, res) => {
@@ -177,7 +171,7 @@ router.post('/saveEvent', (req, res) => {
 
 module.exports = router
 
-=======
+
 router.get('/volunteer/:id/match-events', (req, res) => {
     const volunteerID = parseInt(req.params.id);
 
@@ -248,4 +242,4 @@ router.post('/event/:eventId/send-reminder', (req, res) => {
     });
 });
 module.exports = router
->>>>>>> Stashed changes
+
