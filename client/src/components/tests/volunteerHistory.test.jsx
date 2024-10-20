@@ -1,7 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom'
-import VolunteerHistory from '../volunteerHistory';  // Adjust path if necessary
+import {VolunteerHistory, fetchVolunteerData, fetchEventData, setVolunteerData, setEventData} from '../volunteerHistory';  // Adjust path if necessary
+
+// const volunteers = require('...../server/db/volunteers.js')
+// const events = require('...../server/db/events.js')
+
+global.fetch = jest.fn();
 
 describe('VolunteerHistory Component', () => {
     const mockVolunteerData = [
@@ -71,26 +76,46 @@ describe('VolunteerHistory Component', () => {
         }
     ];
 
-    const mockEventData =[
-        {
-            id: 1,
-            eventName: "Tech Conference 2024",
-            eventDescription: "A conference bringing together technology professionals from around the globe to discuss the latest trends and innovations in the industry.",
-            location: "San Francisco, CA - Moscone Center",
-            requiredSkills: ["Public Speaking", "Networking", "Technical Knowledge", "Event Management"],
-            urgency: "High",
-            eventDate: "2024-10-15",
-            adminID: 1
-        },
-        {
-            id: 2,
-            eventName: "Music Festival",
-            eventDescription: "An exciting music festival featuring various artists from different genres. A perfect blend of rock, pop, and hip-hop performances.",
-            location: "Austin, TX - Zilker Park",
-            requiredSkills: ["Stage Management", "Sound Engineering", "Artist Coordination", "Security"],
-            urgency: "Medium",
-            eventDate: "2024-09-25",
-            adminID: 1
-        }
-    ];
+    test('fetches and displays volunteer data and events', async () => {
+        fetch.mockImplementationOnce(() =>
+          Promise.resolve({
+            json: () => Promise.resolve(volunteerData),
+          })
+        );
+        fetch.mockImplementationOnce(() =>
+          Promise.resolve({
+            json: () => Promise.resolve(eventsData),
+          })
+        );
+    
+        render(<VolunteerHistory />);
+    
+        await waitFor(() => expect(screen.getByText(/Volunteer History for John Doe/i)).toBeInTheDocument());
+    
+        expect(screen.getByText(/Food Bank Volunteer/i)).toBeInTheDocument();
+        expect(screen.getByText(/Animal Shelter Helper/i)).toBeInTheDocument();
+      });
+
+    // test('successfully fetches event data', async () => {
+    //     fetch.mockResolvedValueOnce({
+    //       json: fetch.mockResolvedValueOnce(events),
+    //     });
+    
+    //     await fetchEventData();
+    
+    //     expect(fetch).toHaveBeenCalledWith('http://localhost:4000/events');
+    //     expect(setEventData).toHaveBeenCalledWith(events);
+    // });
+
+    test('handles fetch error', async () => {
+        // render(<VolunteerHistory />);
+
+        console.error = jest.fn();
+        fetch.mockRejectedValueOnce(new Error('Fetch error'));
+    
+        await fetchVolunteerData();
+    
+        expect(fetch).toHaveBeenCalledWith('http://localhost:4000/volunteers/100');
+        expect(console.error).toHaveBeenCalledWith('Error fetching volunteer data:', expect.any(Error));
+    });
 });

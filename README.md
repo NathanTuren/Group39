@@ -17,7 +17,7 @@ After you have installed the proper dependencies, you can run the server using `
 *For notice, you must run client-side and server-side simulateneously on two separate terminals. For example, one terminal you will use `npm start` inside the `client` folder to start the client's `localhost:3000` and the other terminal you will run `npm start` inside ther `server` folder to run `localhost:4000` for the server. 
 
 ## Testing 
-To run unit tests, go inside the `client` folder and run `npm test` to run full tests across our client. To check test coverage, run `npm run test-coverage`. 
+To run unit tests, go inside the `client` folder and run `npm test` to run full tests across our client. To check test coverage, run `npm run test-coverage`. For server, `cd` into `server` folder and run `npm test` to run tests and `npm run test:coverage` to check server test coverage.
 
 ## Adding Features
 We use the [Materials UI Component Library](https://mui.com/material-ui/getting-started/) to generate props and components such as Buttons, Inputs, etc. Please reference this library for local frontend development.
