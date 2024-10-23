@@ -1,103 +1,137 @@
 const express = require('express')
 const router = express.Router()
+const pool = require('../db/db')
 const volunteers = require('../db/volunteers')
 const events = require('../db/events')
 const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path')
 const matchVolunteerToEvents = require('../services/volunteerMatching'); 
-router.get('/volunteers', (req, res) => {
-    volunteers
-    res.send(volunteers)
+
+router.get('/volunteers', async(req, res) => {
+    try {
+        const query = `
+            SELECT 
+                u.*, 
+                s.skillName, 
+                a.availabilityDate 
+            FROM 
+                UserProfile AS u, 
+                UserSkills AS us,
+                Skills AS s,
+                UserAvailability AS a
+            WHERE
+                u.id = us.userId AND
+                us.skillId = s.id AND
+                u.id = a.userId;
+        `;
+        const volunteers = await pool.query(query);
+        res.json(volunteers.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
 })
 
 
-router.get('/events', (req, res) => {
-    events
-    res.send(events)
+router.get('/events', async(req, res) => {
+    try {
+        const query = `
+            SELECT 
+                e.*, s.skillName
+            FROM 
+                EventDetails AS e,
+                EventSkills AS es,
+                Skills AS s
+            WHERE
+                e.id = es.eventId AND
+                es.skillId = s.id;
+        `;
+        const events = await pool.query(query);
+        res.json(events.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
 })
 
 
 // POST request for registering a new volunteer
-router.post('/volunteerRegister', (req, res) => {
+router.post('/volunteerRegister', async (req, res) => {
     const {
         email,
         password,
-        isAdmin,
-        name,
+        fullName,
         address1,
         address2,
         city,
-        state,
+        stateId,
         zipCode,
-        skills,
         preferences,
-        availability,
-        eventParticipation,
-        notification
+        isAdmin,
+        skills = [],
+        availability = []
     } = req.body;
 
-
-    // Ensure that the required fields are provided, this is also protected on client-side validation
     if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required, Please enter a password" });
+        return res.status(400).json({ message: "Email and password are required." });
     }
-
-
-    // Calculate the next ID by finding the max ID in the current array
-    const newId = Math.max(...volunteers.map(v => v.id)) + 1;
-
-
-    // Create a new volunteer object based on the request body and default values for empty fields
-    const newVolunteer = {
-        id: newId,
-        name: name || "", // Use provided name or empty string
-        email: email,
-        password: password,
-        address1: address1 || "",
-        address2: address2 || "",
-        city: city || "",
-        state: state || "",
-        zipCode: zipCode || "",
-        skills: skills || [],
-        preferences: preferences || "",
-        availability: availability || [],
-        eventParticipation: eventParticipation || [],
-        notification: notification || [],
-        isAdmin: isAdmin || false
-    };
-
 
     // Check if the email already exists in the list, if so send error message
-    const emailExists = volunteers.some(volunteer => volunteer.email === email);
-    if (emailExists) {
-        return res.status(409).json({ message: "Email already exists." }); // 409 error represents a conflict error with the client request, an existing email is a denied request to the client
+    const emailCheckQuery = 'SELECT * FROM UserProfile WHERE email = $1';
+    const result = await pool.query(emailCheckQuery, [email]);
+
+    if (result.rows.length > 0) {
+        return res.status(409).json({ message: "Email already exists." });
     }
 
+    try {
+        const [credentialResult] = await pool.query('INSERT INTO UserCredentials SET ?', {
+            userId: email,
+            pass: MD5(password)
+        });
 
-    // Append the new volunteer to the in-memory array
-    volunteers.push(newVolunteer);
+        const credentialsId = credentialResult.insertId;
 
+        // Insert into UserProfile
+        const [profileResult] = await pool.query('INSERT INTO UserProfile SET ?', {
+            credentialsId,
+            fullName,
+            email,
+            pass: MD5(password),
+            address1,
+            address2,
+            city,
+            stateId,
+            zipCode,
+            preferences,
+            isAdmin
+        });
 
-    // Write the updated volunteers array to the volunteers.js file
-    let currentDir = __dirname.split(path.sep); // Split the directories to filter the subdirectories
-    currentDir = currentDir.slice(0, -1).join(path.sep); // Remove the last directory
-    const filePath = path.join(currentDir, 'db', 'volunteers.js'); // Make the file path to be written
-   
-    // Define the file contents to be written to volunteers.js
-    const fileContent = `let volunteers = ${JSON.stringify(volunteers, null, 4)};\n\nmodule.exports = volunteers;`;
+        const userId = profileResult.insertId;
 
-
-    // Write to volunteer mock data file since it doesn't automatically update
-    fs.writeFile(filePath, fileContent, (err) => {
-        if (err) {
-            return res.status(500).json({ message: "An error occurred during registration" });
+        for (const skillId of skills) {
+            const [skillCheck] = await pool.query('SELECT id FROM Skills WHERE id = ?', [skillId]);
+            if (skillCheck.length) {
+                await pool.query('INSERT INTO UserSkills SET ?', {
+                    userId,
+                    skillId
+                });
+            }
         }
-        return res.status(201).json({ message: "Registration Successful", volunteer: newVolunteer });
-    });
 
+        for (const date of availability) {
+            await pool.query('INSERT INTO UserAvailability SET ?', {
+                userId,
+                availabilityDate: date
+            });
+        }
 
+        res.status(201).json({ message: "Registration Successful", userId });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "An error occurred during registration" });
+    }
 });
+
 // POST request for saving profile data
 router.post('/saveProfile', (req, res) => {
     console.log('Received profile:', req.body);

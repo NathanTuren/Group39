@@ -17,9 +17,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-
-
-
 // Custom background container
 const FullWidthBackground = styled('div')({
   backgroundColor: 'rgb(249, 245, 235)',
@@ -28,7 +25,6 @@ const FullWidthBackground = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
 });
-
 
 // Custom form container
 const FormContainer = styled('div')({
@@ -44,7 +40,6 @@ const FormContainer = styled('div')({
   flexGrow: 1,
   overflow: 'auto',
 });
-
 
 // States and skills
 const states = [
