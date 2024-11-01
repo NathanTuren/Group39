@@ -52,18 +52,18 @@ export const Login = () => {
 
   const validateLogin = () => {
     const user = loginData.find(
-      (volunteer) => volunteer.email === email && volunteer.password === password
+      (volunteer) => volunteer.email === email && volunteer.pass === password
     );
 
     console.log(user);
-    
+    localStorage.setItem('credentialsId', user.credentialId);
     // If a user exists we render the appropriate page based on admin or general volunteer
     if (user) {
 
       setError(null); // Clear errors
-      if (selectedRole === 'admin' && user.isAdmin) {
+      if (selectedRole === 'admin' && user.isadmin) {
         navigate('/volunteerMatchingForm'); // Admin dashboard
-      } else if (selectedRole === 'user' && !user.isAdmin) {
+      } else if (selectedRole === 'user' && !user.isadmin) {
         navigate('/userDashboard'); // Regular user dashboard
       } else {
         setError('Invalid role selected for this user.');

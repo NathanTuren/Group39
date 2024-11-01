@@ -25,16 +25,18 @@ export const Register = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: email,
-        password: password,
-        isAdmin: isAdmin
+        pass: password,
+        isadmin: isAdmin
       })
     };
 
     try {
       const response = await fetch('http://localhost:4000/volunteerRegister', options); // POST request
       const data = await response.json();
+      console.log(data);
       if (response.ok) {
         // Successful registration, navigateRoute to profile form
+        localStorage.setItem('credentialsId', data.credentialsId);
         navigateRoute('/profileForm');
       } else {
         // Set error message to display under the fields

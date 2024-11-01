@@ -90,13 +90,14 @@ export const ProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const credentialsId = localStorage.getItem('credentialsId');
     try {
       const response = await fetch('http://localhost:4000/saveProfile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, credentialsId }),
       });
 
 
