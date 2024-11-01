@@ -6,12 +6,17 @@ CREATE TABLE UserCredentials(
     pass varchar(100) NOT NULL
 );
 
+CREATE TABLE States(
+    id int PRIMARY KEY,
+    stateCode varchar(2) NOT NULL,
+    stateName varchar(30) NOT NULL
+);
+
 CREATE TABLE UserProfile(
     id SERIAL PRIMARY KEY,
     credentialsId int NOT NULL,
     fullName varchar(50) NOT NULL,
     email varchar(150) UNIQUE NOT NULL,
-    pass varchar(100) NOT NULL,
     address1 varchar(100) NOT NULL,
     address2 varchar(100),
     city varchar(100) NOT NULL,
@@ -70,12 +75,6 @@ CREATE TABLE VolunteerHistory(
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
 
-CREATE TABLE States(
-    id int PRIMARY KEY,
-    stateCode varchar(2) NOT NULL,
-    stateName varchar(30) NOT NULL
-);
-
 INSERT INTO States (id, stateCode, stateName) VALUES
 (1, 'AL', 'Alabama'),
 (2, 'AK', 'Alaska'),
@@ -127,3 +126,49 @@ INSERT INTO States (id, stateCode, stateName) VALUES
 (48, 'WV', 'West Virginia'),
 (49, 'WI', 'Wisconsin'),
 (50, 'WY', 'Wyoming');
+
+INSERT INTO UserCredentials (userId, pass) VALUES
+('user1@example.com', 'password1'),
+('user2@example.com', 'password2'),
+('admin@example.com', 'adminpassword');
+
+INSERT INTO UserProfile (credentialsId, fullName, email, pass, address1, address2, city, stateId, zipCode, preferences, isAdmin) VALUES
+(1, 'John Doe', 'john.doe@example.com', 'password1', '123 Main St', 'Apt 4B', 'Springfield', 1, '62701', 'volunteer, community service', false),
+(2, 'Jane Smith', 'jane.smith@example.com', 'password2', '456 Elm St', NULL, 'Springfield', 1, '62701', 'environment, education', false),
+(3, 'Admin User', 'admin@example.com', 'adminpassword', '789 Oak St', NULL, 'Springfield', 1, '62701', 'management', true);
+
+INSERT INTO Skills (skillName) VALUES
+('First Aid'),
+('Event Management'),
+('Public Speaking'),
+('Community Outreach'),
+('Technical Support');
+
+INSERT INTO UserSkills (userId, skillId) VALUES
+(1, 1),  
+(1, 2),  
+(2, 3),  
+(3, 4),  
+(3, 5);  
+
+INSERT INTO UserAvailability (userId, availabilityDate) VALUES
+(1, '2024-02-15'),  
+(1, '2024-01-18'),  
+(2, '2024-03-10'),  
+(3, '2024-04-05');
+
+INSERT INTO EventDetails (eventName, eventDescr, eventLocation, urgency, eventDate) VALUES
+('Community Cleanup', 'A community cleanup event to beautify the park.', 'City Park', 'High', '2024-02-15'),
+('Food Drive', 'Collecting non-perishable food for local shelters.', 'Community Center', 'Medium', '2024-03-10'),
+('Health Fair', 'Providing free health screenings and resources.', 'High School Gym', 'High', '2024-04-05');
+
+INSERT INTO EventSkills (eventId, skillId) VALUES
+(1, 1), 
+(1, 2),  
+(2, 3), 
+(3, 4);  
+
+INSERT INTO VolunteerHistory (eventId, userId, participation) VALUES
+(1, 1, 'Participated'), 
+(2, 2, 'Participated'),  
+(3, 3, 'Participated');

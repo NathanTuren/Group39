@@ -33,10 +33,11 @@ export const Register = () => {
     try {
       const response = await fetch('http://localhost:4000/volunteerRegister', options); // POST request
       const data = await response.json();
-      console.log(data);
+      
       if (response.ok) {
         // Successful registration, navigateRoute to profile form
         localStorage.setItem('credentialsId', data.credentialsId);
+        localStorage.setItem('userId', data.userId);
         navigateRoute('/profileForm');
       } else {
         // Set error message to display under the fields
