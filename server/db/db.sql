@@ -73,6 +73,47 @@ CREATE TABLE VolunteerHistory(
     FOREIGN KEY (eventId) REFERENCES EventDetails(id),
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
+CREATE TABLE Inbox (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    senderId int,  -- Optional sender reference, can be null if sent by the system
+    messageText text NOT NULL,
+    isRead boolean DEFAULT FALSE,
+    receivedDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id),
+    FOREIGN KEY (senderId) REFERENCES UserProfile(id)
+);
+
+CREATE TABLE Notifications (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    notificationText text NOT NULL,
+    notificationDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id)
+);
+
+CREATE TABLE UserEvents (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    eventId int NOT NULL,
+    assignmentDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id),
+    FOREIGN KEY (eventId) REFERENCES EventDetails(id),
+    UNIQUE (userId, eventId)
+);
+
+INSERT INTO Notifications (userId, notificationText) VALUES
+(1, 'You have been assigned to the Community Cleanup event on 2024-02-15.'),
+(2, 'You have been assigned to the Food Drive event on 2024-03-10.'),
+(3, 'You have been assigned to the Health Fair event on 2024-04-05.');
+
+INSERT INTO UserEvents (userId, eventId) VALUES
+(1, 1),  -- John Doe assigned to Community Cleanup
+(2, 2),  -- Jane Smith assigned to Food Drive
+(3, 3);  -- Admin User assigned to Health Fair
 
 INSERT INTO States (id, stateCode, stateName) VALUES
 (1, 'AL', 'Alabama'),
