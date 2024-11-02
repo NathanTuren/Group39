@@ -7,10 +7,10 @@ const events = require('../db/events');
 const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path');
-const matchVolunteerToEvents = require('../services/volunteerMatching');
+const matchVolunteerToEvents = require('../services/volunteerMatching'); 
 const notifyVolunteersAssignedToEvent = require('../services/volunteerMatching');
 
-router.get('/volunteers', async (req, res) => {
+router.get('/volunteers', async(req, res) => {
     try {
         const query = `
             SELECT 
@@ -38,7 +38,7 @@ router.get('/volunteers', async (req, res) => {
 })
 
 
-router.get('/events', async (req, res) => {
+router.get('/events', async(req, res) => {
     try {
         const query = `
             SELECT 
@@ -58,7 +58,7 @@ router.get('/events', async (req, res) => {
     }
 })
 
-router.get('/skills', async (req, res) => {
+router.get('/skills', async(req, res) => {
     try {
         const query = `
             SELECT 
@@ -73,7 +73,7 @@ router.get('/skills', async (req, res) => {
     }
 })
 
-router.get('/states', async (req, res) => {
+router.get('/states', async(req, res) => {
     try {
         const query = `
             SELECT 
@@ -90,10 +90,10 @@ router.get('/states', async (req, res) => {
 
 // POST request for registering a new volunteer
 router.post('/volunteerRegister', async (req, res) => {
-    const {
-        email,
+    const { 
+        email, 
         pass,
-        isadmin
+        isadmin 
     } = req.body;
     
     // Check that email and password are provided
@@ -136,11 +136,11 @@ router.post('/volunteerRegister', async (req, res) => {
 
 // POST request for saving profile data
 router.post('/saveProfile', async (req, res) => {
-    const { fullName, address1, address2, city, stateId, zipCode, preferences, skills = [], availability = [], credentialsId, userId } = req.body;
+    const { fullName, address1, address2, city, stateId, zipCode, preferences, skills=[], availability=[], credentialsId, userId } = req.body;
 
     try {
         await pool.query('UPDATE UserProfile SET fullName = $1, address1 = $2, address2 = $3, city = $4, stateId = $5, zipCode = $6, preferences = $7 WHERE credentialsId = $8;', [fullName, address1, address2, city, stateId, zipCode, preferences, credentialsId]);
-
+        
         // update skills for user in database
         // await pool.query('DELETE FROM UserSkills WHERE userId = $1;', [userId]);
         for (const skill of skills) {
@@ -262,7 +262,7 @@ router.get('/volunteer/:id/match-events', async (req, res) => {
 router.post('/volunteer/:volunteerID/notify', async (req, res) => {
     const volunteerID = parseInt(req.params.volunteerID);
 
-    const eventID = req.body.eventId;
+    const eventID = req.body.eventId; 
     const eventResult = await pool.query('SELECT * FROM EventDetails WHERE id = $1;', [eventID]);
     const event = eventResult.rows[0];
 
