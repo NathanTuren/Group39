@@ -74,6 +74,38 @@ CREATE TABLE VolunteerHistory(
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
 
+CREATE TABLE Notifications (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    notificationText text NOT NULL,
+    notificationDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id)
+);
+
+CREATE TABLE UserEvents (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    eventId int NOT NULL,
+    assignmentDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id),
+    FOREIGN KEY (eventId) REFERENCES EventDetails(id),
+    UNIQUE (userId, eventId)
+);
+
+CREATE TABLE Inbox (
+    id SERIAL PRIMARY KEY,
+    userId int NOT NULL,
+    senderId int,  -- Optional sender reference, can be null if sent by the system
+    messageText text NOT NULL,
+    isRead boolean DEFAULT FALSE,
+    receivedDate timestamp DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (userId) REFERENCES UserProfile(id),
+    FOREIGN KEY (senderId) REFERENCES UserProfile(id)
+);
+
 INSERT INTO States (id, stateCode, stateName) VALUES
 (1, 'AL', 'Alabama'),
 (2, 'AK', 'Alaska'),
