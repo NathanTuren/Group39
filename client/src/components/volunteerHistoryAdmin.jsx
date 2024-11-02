@@ -24,19 +24,21 @@ const EventCatalogContainer = styled('div')({
 });
 
 export const VolunteerHistoryAdmin = () => {
-  const [volunteers, getVolunteerData] = useState([]);
-  // Fetch volunteers from the backend using Node.js server (localhost:4000)
+  const [volunteers, setVolunteerData] = useState([]);
   const fetchVolunteers = async () => {
     try {
       const res = await fetch('http://localhost:4000/volunteers'); // fetch the appropriate API in this case we do a get to /volunteers
       const data = await res.json();
-      getVolunteerData(data);
+      const uniqueVolunteers = Array.from(
+        new Map(data.map(volunteer => [volunteer.id, volunteer])).values()
+      );
+      setVolunteerData(uniqueVolunteers);
+      console.log(uniqueVolunteers);
     } catch (err) {
       console.error('Error fetching volunteer data:', err);
     }
   };
 
-  // We employ a useEffect to render all the data on loading of the page
   useEffect(() => {
     fetchVolunteers();
   }, []);
@@ -54,7 +56,7 @@ export const VolunteerHistoryAdmin = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h5" gutterBottom>
-                    {volunteer.name}
+                    {volunteer.fullname}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
                     <strong>Email:</strong> {volunteer.email}

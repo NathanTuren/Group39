@@ -132,10 +132,10 @@ INSERT INTO UserCredentials (userId, pass) VALUES
 ('user2@example.com', 'password2'),
 ('admin@example.com', 'adminpassword');
 
-INSERT INTO UserProfile (credentialsId, fullName, email, pass, address1, address2, city, stateId, zipCode, preferences, isAdmin) VALUES
-(1, 'John Doe', 'john.doe@example.com', 'password1', '123 Main St', 'Apt 4B', 'Springfield', 1, '62701', 'volunteer, community service', false),
-(2, 'Jane Smith', 'jane.smith@example.com', 'password2', '456 Elm St', NULL, 'Springfield', 1, '62701', 'environment, education', false),
-(3, 'Admin User', 'admin@example.com', 'adminpassword', '789 Oak St', NULL, 'Springfield', 1, '62701', 'management', true);
+INSERT INTO UserProfile (credentialsId, fullName, email, address1, address2, city, stateId, zipCode, preferences, isAdmin) VALUES
+(1, 'John Doe', 'john.doe@example.com', '123 Main St', 'Apt 4B', 'Springfield', 1, '62701', 'volunteer, community service', false),
+(2, 'Jane Smith', 'jane.smith@example.com', '456 Elm St', NULL, 'Springfield', 1, '62701', 'environment, education', false),
+(3, 'Admin User', 'admin@example.com', '789 Oak St', NULL, 'Springfield', 1, '62701', 'management', true);
 
 INSERT INTO Skills (skillName) VALUES
 ('First Aid'),
