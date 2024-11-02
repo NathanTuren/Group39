@@ -96,27 +96,36 @@ router.post('/volunteerRegister', async (req, res) => {
         isadmin 
     } = req.body;
     
+    // Check that email and password are provided
     if (!email || !pass) {
         return res.status(400).json({ message: "Email and password are required." });
     }
 
-    const emailCheckQuery = 'SELECT * FROM UserProfile WHERE email = $1;';
-    const result = await pool.query(emailCheckQuery, [email]);
-
-    if (result.rows.length > 0) {
-        return res.status(409).json({ message: "Email already exists." });
-    }
-
     try {
-        const credentialResult = await pool.query('INSERT INTO UserCredentials (userId, pass) VALUES ($1, $2) RETURNING id;', [email, MD5(pass)]);
-        const credentialsId = credentialResult.rows[0].id;
+        // Check if the email already exists in the UserCredentials table
+        const emailCheckQuery = 'SELECT * FROM UserCredentials WHERE userId = $1;';
+        const result = await pool.query(emailCheckQuery, [email]);
 
+        if (result.rows.length > 0) {
+            return res.status(409).json({ message: "Email already exists." });
+        }
+
+        // Insert into UserCredentials table
+        const credentialResult = await pool.query(
+            'INSERT INTO UserCredentials (userId, pass, isAdmin) VALUES ($1, $2, $3) RETURNING id;', 
+            [email, MD5(pass), isadmin]
+        );
+        const credentialsId = credentialResult.rows[0].id;
+        const userId = credentialResult.rows[0].userId;
+
+        // Insert into UserProfile table with reference to credentialsId
         const profileResult = await pool.query(`
             INSERT INTO UserProfile (credentialsId, fullName, email, address1, city, stateId, zipCode, isAdmin) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
-            [credentialsId, '', email, '', '', 1, '', isadmin]);
+            [credentialsId, '', email, '', '', 1, '', isadmin]
+        );
         
-        const userId = profileResult.rows[0].id;
+        // const userId = profileResult.rows[0].id;
 
         res.status(201).json({ message: "Registration Successful", userId, credentialsId });
     } catch (error) {
