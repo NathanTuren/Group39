@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "mocha tests/route.test.mjs",
     "test:coverage": "nyc mocha tests/route.test.mjs"
   },
@@ -14,7 +15,9 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "md5": "^2.3.0",
+    "pg": "^8.13.0"
   },
   "devDependencies": {
     "chai": "^5.1.1",
