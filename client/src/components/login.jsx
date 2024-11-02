@@ -23,7 +23,7 @@ export const FormContainer = styled('div')({
 
 export const Login = () => {
   const [selectedRole, setSelectedRole] = useState(null);
-  const [loginData, setLoginData] = useState([]);
+  // const [loginData, setLoginData] = useState([]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
@@ -34,43 +34,36 @@ export const Login = () => {
     setSelectedRole(role);
   };
 
-  // Fetch login data from the backend using Node.js server (localhost:4000)
-  const fetchLoginData = async () => {
+
+  const validateLogin = async () => {
     try {
-      const res = await fetch('http://localhost:4000/volunteers'); // fetch the appropriate API in this case we do a get to /volunteers
-      const data = await res.json();
-      setLoginData(data);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-    }
-  };
+      // Send email and password to the /login endpoint
+      const response = await fetch('http://localhost:4000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, pass: password, role: selectedRole}) // pass the password as "pass" to match server expectations
+      });
 
-  // We employ a useEffect to render all the data on loading of the page
-  useEffect(() => {
-    fetchLoginData();
-  }, []); 
+      const data = await response.json();
 
-  const validateLogin = () => {
-    const user = loginData.find(
-      (volunteer) => volunteer.email === email && volunteer.pass === password
-    );
+      if (response.ok) {
+        localStorage.setItem('credentialsId', data.userId); // Store user ID or token as needed
 
-    console.log(user);
-    localStorage.setItem('credentialsId', user.credentialId);
-    // If a user exists we render the appropriate page based on admin or general volunteer
-    if (user) {
+        setError(null); // Clear errors
 
-      setError(null); // Clear errors
-      if (selectedRole === 'admin' && user.isadmin) {
-        navigate('/volunteerMatchingForm'); // Admin dashboard
-      } else if (selectedRole === 'user' && !user.isadmin) {
-        navigate('/userDashboard'); // Regular user dashboard
+        if (selectedRole === 'admin' && data.isAdmin) { // If admin, navigate to admin dashboard
+          navigate('/volunteerMatchingForm'); // Admin dashboard
+        } else if (selectedRole === 'user' && !data.isAdmin) { // if user, navigate to user dashaboard
+          navigate('/userDashboard'); // Regular user dashboard
+        } else {
+          setError('Invalid role selected for this user.');
+        }
       } else {
-        setError('Invalid role selected for this user.');
+        setError(data.message); // // If login fails, show the error message from the API
       }
-    } else {
-      // Invalid credentials
-      setError('Invalid email or password.');
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('An error occurred while trying to log in.');
     }
   };
 
