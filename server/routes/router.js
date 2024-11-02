@@ -37,6 +37,54 @@ router.get('/volunteers', async(req, res) => {
     }
 })
 
+router.post('/login', async (req, res) => {
+    const { email, pass, role } = req.body;
+
+    if (!email || !pass) {
+        return res.status(400).json({ message: "Email and password are required." });
+    }
+
+    if (!role) {
+        return res.status(400).json({ message: "Selected role is required." });
+    }
+
+    try {
+        // Query the UserCredentials table to find the user by email
+        const query = 'SELECT * FROM UserCredentials WHERE userId = $1;';
+        const result = await pool.query(query, [email]);
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({ message: "Email or password not found." });
+        }
+
+        const user = result.rows[0];
+        const hashedPassword = MD5(pass);
+
+        // Check if the hashed password matches the stored password
+        if (hashedPassword !== user.pass) {
+            console.log(hashedPassword);
+            console.log(user.pass);
+            return res.status(401).json({ message: "Invalid email or password." });
+        }
+
+        // Check if the role matches the user's isAdmin status
+        if ((role === 'admin' && !user.isadmin) || (role === 'user' && user.isadmin)) {
+            return res.status(401).json({ message: "Invalid role selected for this user." });
+        }
+
+        // Successful login
+        res.status(200).json({
+            message: "Login successful",
+            userId: user.id,
+            email: user.userid,
+            isAdmin: user.isadmin
+        });
+    } catch (error) {
+        console.error('Login error:', error.message);
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
+
 
 router.get('/events', async(req, res) => {
     try {

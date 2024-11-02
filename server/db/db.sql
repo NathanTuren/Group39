@@ -127,9 +127,8 @@ INSERT INTO States (id, stateCode, stateName) VALUES
 (50, 'WY', 'Wyoming');
 
 INSERT INTO UserCredentials (userId, pass, isAdmin) VALUES
-('user1@example.com', 'password1', false),
-('user2@example.com', 'password2', false),
-('admin@example.com', 'adminpassword', true);
+('cartertest@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', false); -- pass: password
+
 
 INSERT INTO UserProfile (credentialsId, fullName, email, address1, address2, city, stateId, zipCode, preferences, isAdmin) VALUES
 (1, 'John Doe', 'john.doe@example.com', '123 Main St', 'Apt 4B', 'Springfield', 1, '62701', 'volunteer, community service', false),
