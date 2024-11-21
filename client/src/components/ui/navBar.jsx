@@ -3,17 +3,20 @@ import { AppBar, Toolbar, Typography, Stack, IconButton, Menu, MenuItem } from '
 import { styled } from '@mui/system';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
-import Notifications from './notifications'; // Import the new Notifications component
+import Notifications from '../notifications';
+import '../../app.css';
+import { useNavigate } from 'react-router-dom';
 
 // Custom styles for the navbar
 const StyledAppBar = styled(AppBar)({
-  backgroundColor: 'rgb(249, 245, 235)', // Same background color
+  backgroundColor: 'rgb(255, 255, 255)', // Same background color
   boxShadow: 'none',
 });
 
 export const Navbar = () => {
   // State to handle menu interactions
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,18 +27,16 @@ export const Navbar = () => {
   };
 
   return (
-    <StyledAppBar position="static">
-      <Toolbar>
+    <StyledAppBar className="bg-white" position="static">
+      <Toolbar className="items-center justify-center">
         <img src="/images/volunteer.png" alt="Logo" width="75" />
-        <Typography variant="h6" sx={{ flexGrow: 1, color: 'brown' }}>
+        <Typography variant="h6" sx={{ flexGrow: 1, color: 'brown' }} onClick={() => navigate('/')} className="cursor-pointer">
           VolunteerMatch
         </Typography>
 
-        <Stack direction="row" spacing={2}>
-          {/* Notifications */}
+        {/* <Stack direction="row" spacing={2}>
           <Notifications />
 
-          {/* Profile & Settings */}
           <IconButton
             size="large"
             edge="end"
@@ -64,7 +65,7 @@ export const Navbar = () => {
               Settings
             </MenuItem>
           </Menu>
-        </Stack>
+        </Stack> */}
       </Toolbar>
     </StyledAppBar>
   );

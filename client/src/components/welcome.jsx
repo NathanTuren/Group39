@@ -1,96 +1,52 @@
 import React from 'react';
-import { Button, Typography, Box, Stack, Paper } from '@mui/material';
-import { FullWidthBackground } from './login';
+import { Button, Typography, Stack } from '@mui/material';
+import { MdOutlineArrowRightAlt } from "react-icons/md";
+import { FullWidthBackground } from './login/login.jsx';
+import Navbar from './ui/navBar.jsx';
 
 export const Welcome = () => {
   return (
     <FullWidthBackground>
-      <Stack
-        direction="row"
-        sx={{
-          height: '100%',
-          display: "inherit",
-          width: '100%',
-          margin: 0, 
-          padding: 0,
-          overflow: "hidden"
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgb(249, 245, 235)',
-          }}
+      <Navbar />
+      <div className="flex h-screen bg-stone-100 justify-center items-center">
+        <Stack
+          direction="column"
+          className="w-full h-full bg-transparent text-center relative"
         >
-          <Paper
-            elevation={0}
-            sx={{
-              width: '80%',
-              height: '80%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgb(249, 245, 235)',
-              color: 'brown',
-            }}
-          >
-            <Stack spacing={2} alignItems="center">
-                <img src="/images/volunteer.png" alt="Logo" width="300" />
-              <Typography variant="h3" align="center"> Find Your Community </Typography>
-            </Stack>
-          </Paper>
-        </Box>
+          {/* Image with responsive size */}
+          <img
+            src="/images/tree_planting.png"
+            alt="Tree-Planting"
+            className="w-full h-[90%] object-cover"
+          />
 
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgb(249, 245, 235)',
-          }}
-        >
-          <Paper
-            elevation={24}
-            sx={{
-              padding: 3,
-              width: '60%',
-              height: '60%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'rgb(249, 245, 235)',
-              color: 'white',
-            }}
-          >
-            <Stack spacing={3} alignItems="center" justifyContent="center">
-            <Typography variant="h5" align="center" sx={{color: "brown"}}> Lets Get Started! </Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                href="/register"
-                sx={{ color: 'white', backgroundColor: 'brown' }}
-              >
-                Create an Account
-              </Button>
+          {/* Heading text with responsive position */}
+          <p className="absolute text-red-800 right-[15%] bottom-[70%] text-4xl sm:text-6xl lg:text-8xl whitespace-pre">
+            Find Your Community
+          </p>
 
-              <Typography variant="h5" align="center" sx={{color: "brown"}}> Already a User? </Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                href="/login"
-                sx={{ color: 'white', backgroundColor: 'brown' }}
-              >
-                Login
-              </Button>
-            </Stack>
-          </Paper>
-        </Box>
-      </Stack>
-      </FullWidthBackground>
+          <div className="absolute flex flex-row justify-center space-x-4 bottom-[60%] left-0 right-0">
+            <Button
+              variant="contained"
+              href="/register"
+              className="text-white mt-4"
+              sx={{ backgroundColor: 'brown', width: '15%' }}
+            >
+              Register  &nbsp; <MdOutlineArrowRightAlt />
+            </Button>
+            <Button
+              variant="contained"
+              href="/login"
+              className="text-white mt-4"
+              sx={{ backgroundColor: 'brown', width: '15%' }}
+            >
+              Login  &nbsp; <MdOutlineArrowRightAlt />
+            </Button>
+          </div>
+
+        </Stack>
+      </div>
+    </FullWidthBackground>
   );
 };
 
