@@ -1,7 +1,15 @@
 let volunteers = require('../db/volunteers.js');
 let events = require('../db/events.js');
 
-function matchVolunteerToEvents(volunteerID, events) {
+async function matchVolunteerToEvents(volunteerID, events) {
+    // // Call a fetch call to get the current volunteers in the database
+    // const response = await fetch('http://localhost:3000/volunteers_match');
+    // if (!response.ok) {
+    //     throw new Error(`Failed to fetch volunteers: ${response.statusText}`);
+    // }
+
+    // let volunteers = await response.json();
+
     let matchingEvents = [];
     const volunteer = volunteers.find(v => v.id === volunteerID.id);
     events.forEach(event => {
