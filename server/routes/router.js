@@ -37,6 +37,60 @@ router.get('/volunteers', async(req, res) => {
     }
 })
 
+// router.get('/volunteers_match', async (req, res) => {
+//     try {
+//         const query = `
+//             SELECT 
+//                 u.id AS userId, 
+//                 u.fullName AS name, 
+//                 u.city, 
+//                 s.skillName, 
+//                 a.availabilityDate
+//             FROM 
+//                 UserProfile AS u
+//             LEFT JOIN UserSkills AS us ON u.id = us.userId
+//             LEFT JOIN Skills AS s ON us.skillId = s.id
+//             LEFT JOIN UserAvailability AS a ON u.id = a.userId;
+//         `;
+//         const rows = await pool.query(query);
+
+//         // Transform rows into the desired format
+//         const volunteersMap = new Map();
+
+//         rows.rows.forEach(row => {
+//             if (!volunteersMap.has(row.userid)) {
+//                 // Add new user entry if not already in the map
+//                 volunteersMap.set(row.userid, {
+//                     id: row.userId,
+//                     name: row.name,
+//                     city: row.city,
+//                     skills: [],
+//                     availability: [],
+//                 });
+//             }
+
+//             // Add skill if it exists and is not already in the array
+//             if (row.skillname && !volunteersMap.get(row.userid).skills.includes(row.skillname)) {
+//                 volunteersMap.get(row.userid).skills.push(row.skillname);
+//             }
+
+//             // Add availability date if it exists and is not already in the array
+//             if (row.availabilitydate && !volunteersMap.get(row.userid).availability.includes(row.availabilitydate)) {
+//                 volunteersMap.get(row.userid).availability.push(row.availabilitydate);
+//             }
+//         });
+
+//         // Convert the map to an array of volunteers
+//         const volunteers = Array.from(volunteersMap.values());
+
+//         res.json(volunteers);
+//     } catch (error) {
+//         console.error("Error fetching volunteers:", error.message);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// });
+
+
 router.post('/login', async (req, res) => {
     const { email, pass, role } = req.body;
 
@@ -144,12 +198,12 @@ router.post('/volunteerRegister', async (req, res) => {
         isadmin 
     } = req.body;
     
-    // Check that email and password are provided
-    if (!email || !pass) {
-        return res.status(400).json({ message: "Email and password are required." });
-    }
-
     try {
+        // Check that email and password are provided
+        if (!email || !pass) {
+            return res.status(400).json({ message: "Email and password are required." });
+        }
+
         // Check if the email already exists in the UserCredentials table
         const emailCheckQuery = 'SELECT * FROM UserCredentials WHERE userId = $1;';
         const result = await pool.query(emailCheckQuery, [email]);
@@ -181,6 +235,47 @@ router.post('/volunteerRegister', async (req, res) => {
         res.status(500).json({ message: "An error occurred during registration" });
     }
 });
+
+router.delete('/deleteUser', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        // Check that email is provided
+        if (!email) {
+            return res.status(400).json({ message: "Email is required." });
+        }
+
+        // Retrieve the credentialsId associated with the email
+        const getCredentialsIdQuery = `
+            SELECT id FROM UserCredentials WHERE userId = $1;
+        `;
+        const credentialsResult = await pool.query(getCredentialsIdQuery, [email]);
+
+        if (credentialsResult.rows.length === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        const credentialsId = credentialsResult.rows[0].id;
+
+        // Delete from UserProfile table
+        const deleteUserProfileQuery = `
+            DELETE FROM UserProfile WHERE credentialsId = $1;
+        `;
+        await pool.query(deleteUserProfileQuery, [credentialsId]);
+
+        // Delete from UserCredentials table
+        const deleteUserCredentialsQuery = `
+            DELETE FROM UserCredentials WHERE id = $1;
+        `;
+        await pool.query(deleteUserCredentialsQuery, [credentialsId]);
+
+        res.status(200).json({ message: "User deleted successfully." });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ message: "An error occurred while deleting the user." });
+    }
+});
+
 
 // POST request for saving profile data
 router.post('/saveProfile', async (req, res) => {
