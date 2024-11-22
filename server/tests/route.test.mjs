@@ -42,6 +42,14 @@ afterEach(async () => {
 	await request(app)
 		.delete("/deleteUser")
 		.send(profileData);
+
+	const profileData2 = {
+		email: "newtest2@example.com",
+	};
+
+	await request(app)
+		.delete("/deleteUser")
+		.send(profileData2);
 });
 
 // Tests for API Routes
@@ -49,16 +57,24 @@ describe("API Routes", () => {
 	describe("POST /saveProfile", () => {
 		it("should save a new profile and return success message", async () => {
 			const profileData = {
-				name: "John Doe",
-				email: "john@example.com",
-				skills: ["JavaScript", "Node.js"],
+				fullName: "Test Name",
+				address1: "123 Main St",
+				address2: "Apt 4B",
+				city: "Springfield",
+				stateId: 1, 
+				zipCode: "12345",
+				preferences: "Some preferences",
+				skills: ["JavaScript", "Node.js"], // Assuming these exist in your `Skills` table
+				availability: ["2024-01-01", "2024-01-02"], // Dates for availability
+				credentialsId: 1
 			};
-
+		
 			const response = await request(app)
 				.post("/saveProfile")
 				.send(profileData);
+			expect(response.body.message).to.equal("Profile data updated successfully.");
 			expect(response.status).to.equal(200);
-			expect(response.body.message).to.equal("Profile data updated successfully");
+			
 		});
 	});
 
@@ -66,7 +82,7 @@ describe("API Routes", () => {
 
 		it("should register a new user", async () => {
 			const profileData = {
-				email: "newtest@example.com",
+				email: "newtest2@example.com",
 				pass: "password12345",
 				isadmin: true
 			};
@@ -118,10 +134,19 @@ describe("API Routes", () => {
 
 	describe("Login API", () => {
 		it("should login successfully with correct credentials", async () => {
+			const profileData = {
+				id: 1,
+				email: "newtest@example.com",
+				pass: "password12345",
+				isadmin: true
+			};
+			const responseRegister = await request(app)
+				.post("/volunteerRegister")
+				.send(profileData);
 			const loginData = {
-				email: "cartertest@gmail.com",
-				pass: "password",
-				role: "userf",
+				email: "newtest@example.com",
+				pass: "password12345",
+				role: "admin",
 			};
 			const response = await request(app).post("/login").send(loginData);
 			expect(response.body.message).to.equal("Login successful");
