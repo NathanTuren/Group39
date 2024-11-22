@@ -24,3 +24,12 @@ To run unit tests, go inside the `client` folder and run `npm test` to run full 
 
 ## Adding Features
 We use the [Materials UI Component Library](https://mui.com/material-ui/getting-started/) to generate props and components such as Buttons, Inputs, etc. Please reference this library for local frontend development.
+
+## Adding Custom Email
+We use `nodemailer` to send emails and verify registration. To do this, please make a `.env` file under `server` directory. Here you want to make sure its in the following format:
+
+```plaintext
+GMAIL_USER=your_email@gmail.com
+GMAIL_PASSWORD=your_app_password
+```
+To generate an app password, please go to Google's https://knowledge.workspace.google.com/kb/how-to-create-app-passwords-000009237

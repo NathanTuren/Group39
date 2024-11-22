@@ -9,6 +9,94 @@ const fs = require('fs');
 const path = require('path');
 const matchVolunteerToEvents = require('../services/volunteerMatching'); 
 const notifyVolunteersAssignedToEvent = require('../services/volunteerMatching');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+require('dotenv').config();
+
+
+// Configure nodemailer
+var transporter = nodemailer.createTransport({
+    service: 'Gmail', // Or your email service
+    auth: {
+        user: process.env.GMAIL_USER, // Replace with your email
+        pass: process.env.GMAIL_PASSWORD // Replace with your email password
+    }
+});
+
+// API to send the verification email
+router.post('/sendVerificationEmail', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required.' });
+    }
+
+    try {
+        // Generate a verification token
+        const token = crypto.randomBytes(32).toString('hex').substring(0, 100);
+
+        // Update the UserCredentials table with the token
+        const result = await pool.query('UPDATE UserCredentials SET verificationToken = $1 WHERE userId = $2;', [token, email]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Email not found." });
+        }
+
+        // Send email
+        const verificationLink = `http://localhost:4000/verifyEmail?token=${token}&email=${encodeURIComponent(email)}`;
+        const mailOptions = {
+            from: 'carterung@gmail.com',
+            to: email,
+            subject: 'Verify your email address',
+            text: `Click the link to verify your email: ${verificationLink}`,
+            html: `<p>Click the link to verify your email:</p><a href="${verificationLink}">${verificationLink}</a>`
+        };
+
+        await transporter.sendMail(mailOptions, function(error, res) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Message Sent");
+            }
+        });
+        res.status(200).json({ message: 'Verification email sent.' });
+    } catch (error) {
+        console.error('Error sending email:', error.message);
+        res.status(500).json({ message: 'Failed to send verification email.' });
+    }
+});
+
+
+router.get('/verifyEmail', async (req, res) => {
+    const { token, email } = req.query;
+
+    if (!token || !email) {
+        return res.status(400).json({ message: 'Invalid verification link.' });
+    }
+
+    try {
+        // Retrieve the token from the database
+        const query = 'SELECT verificationToken FROM UserCredentials WHERE userId = $1;';
+        const result = await pool.query(query, [email]);
+
+        if (result.rows.length === 0 || result.rows[0].verificationtoken !== token) {
+            return res.status(400).json({ message: 'Invalid or expired token.' });
+        }
+
+        // Mark the user as verified and clear the token
+        await pool.query(
+            'UPDATE UserCredentials SET verified = TRUE, verificationToken = NULL WHERE userId = $1;',
+            [email]
+        );
+
+        // Redirect to profile form after verification
+        res.status(200).redirect('http://localhost:3000/profileForm');
+    } catch (error) {
+        console.error('Error verifying email:', error.message);
+        res.status(500).json({ message: 'Failed to verify email.' });
+    }
+});
+
 
 router.get('/volunteers', async(req, res) => {
     try {
@@ -279,29 +367,56 @@ router.delete('/deleteUser', async (req, res) => {
 
 // POST request for saving profile data
 router.post('/saveProfile', async (req, res) => {
-    const { fullName, address1, address2, city, stateId, zipCode, preferences, skills=[], availability=[], credentialsId, userId } = req.body;
+    const { fullName, address1, address2, city, stateId, zipCode, preferences, skills = [], availability = [], credentialsId } = req.body;
+
+    if (!credentialsId) {
+        return res.status(400).json({ message: "Credentials ID is required." });
+    }
 
     try {
-        await pool.query('UPDATE UserProfile SET fullName = $1, address1 = $2, address2 = $3, city = $4, stateId = $5, zipCode = $6, preferences = $7 WHERE credentialsId = $8;', [fullName, address1, address2, city, stateId, zipCode, preferences, credentialsId]);
+        // Fetch the userId using credentialsId
+        const fetchUserQuery = `SELECT id FROM UserProfile WHERE credentialsId = $1;`;
+        const userResult = await pool.query(fetchUserQuery, [credentialsId]);
         
-        // update skills for user in database
-        // await pool.query('DELETE FROM UserSkills WHERE userId = $1;', [userId]);
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        const userId = userResult.rows[0].id;
+        console.log("Fetched userId:", userId); // Debugging log
+
+        // Update the UserProfile table
+        await pool.query(
+            'UPDATE UserProfile SET fullName = $1, address1 = $2, address2 = $3, city = $4, stateId = $5, zipCode = $6, preferences = $7 WHERE credentialsId = $8;',
+            [fullName, address1, address2, city, stateId, zipCode, preferences, credentialsId]
+        );
+
+        // Insert or update skills
         for (const skill of skills) {
-            const { rows } = await pool.query('SELECT id FROM Skills WHERE skillname = $1;', [skill]);
-            if (rows.length > 0) {
-                const skillId = rows[0].id;
-                await pool.query('INSERT INTO UserSkills (userId, skillId) VALUES ($1, $2);', [userId, skillId]);
+            const skillResult = await pool.query('SELECT id FROM Skills WHERE skillname = $1;', [skill]);
+            if (skillResult.rows.length > 0) {
+                const skillId = skillResult.rows[0].id;
+                await pool.query(
+                    `INSERT INTO UserSkills (userId, skillId) VALUES ($1, $2) ON CONFLICT DO NOTHING;`,
+                    [userId, skillId]
+                );
+            } else {
+                console.error(`Skill "${skill}" not found in Skills table.`);
             }
         }
 
-        // update availability for user in database
+        // Insert or update availability
         for (const date of availability) {
-            await pool.query('INSERT INTO UserAvailability (userId, availabilityDate) VALUES ($1, $2);', [userId, date]);
+            await pool.query(
+                `INSERT INTO UserAvailability (userId, availabilityDate) VALUES ($1, $2) ON CONFLICT DO NOTHING;`,
+                [userId, date]
+            );
         }
-        res.status(200).json({ message: "Profile data updated successfully" });
+
+        res.status(200).json({ message: "Profile data updated successfully." });
     } catch (error) {
-        console.error(error.message);
-        res.status(500).json({ message: "Error saving profile data" });
+        console.error("Error saving profile data:", error.message);
+        res.status(500).json({ message: "Error saving profile data." });
     }
 });
 

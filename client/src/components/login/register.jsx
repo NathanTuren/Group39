@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { TextField, Button, Typography, Stack , ButtonGroup} from '@mui/material';
+import { TextField, Button, Typography, Stack} from '@mui/material';
 import { FullWidthBackground, FormContainer } from './login';
 import { Select, MenuItem, InputLabel, FormControl, Box } from '@mui/material';
 import Alert from '@mui/material/Alert';
@@ -35,6 +35,8 @@ export const Register = () => {
     };
 
     try {
+
+
       const response = await fetch('http://localhost:4000/volunteerRegister', options); // POST request
       const data = await response.json();
       
@@ -42,8 +44,20 @@ export const Register = () => {
         // Successful registration, navigateRoute to profile form
         localStorage.setItem('credentialsId', data.credentialsId);
         localStorage.setItem('userId', data.userId);
-        navigateRoute('/profileForm');
-      } else {
+        // Send verification email after successful registration
+        const emailResponse = await fetch('http://localhost:4000/sendVerificationEmail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+        });
+
+        if (emailResponse.ok) {
+            // Redirect to the verification page
+            navigateRoute('/verification', { state: { email } });
+        } else {
+            setErrorMessage('Failed to send verification email.');
+        }
+    } else {
         // Set error message to display under the fields
         setErrorMessage(data.message || 'An error occurred during registration.');
       }
