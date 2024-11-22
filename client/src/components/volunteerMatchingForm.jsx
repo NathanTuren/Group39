@@ -3,14 +3,7 @@ import { Button, Typography, MenuItem, Select, InputLabel, FormControl, Chip, Bo
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 
-// Custom background container
-const FullWidthBackground = styled('div')({
-  backgroundColor: 'rgb(249, 245, 235)',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
+import { FullWidthBackground } from './login/login';
 
 // Custom form container
 const FormContainer = styled('div')({
@@ -44,7 +37,8 @@ export const VolunteerMatchingForm = () => {
         const response = await fetch('http://localhost:4000/volunteers');
         if (response.ok) {
           const data = await response.json();
-          setVolunteers(data); // Assuming the response is an array of volunteers
+          setVolunteers(data); 
+          console.log(volunteers);
         } else {
           setError('Failed to fetch volunteers');
         }

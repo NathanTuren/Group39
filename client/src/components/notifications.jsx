@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem, Badge } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { IconButton, Badge, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
+import Sidebar from './ui/sidebar';
+import { FullWidthBackground } from './login/login';
 
-export const Notifications = () => {
+export const Notifications = ({ userId }) => {
+  const [notifications, setNotifications] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  // Fetch notifications from the API when the component mounts
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(`http://localhost:4000/notifications/${userId}`);
+        const data = await response.json();
+        setNotifications(data); 
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchNotifications();
+  }, [userId]); 
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -14,27 +32,38 @@ export const Notifications = () => {
   };
 
   return (
-    <>
-      <IconButton size="large" aria-label="show notifications" color="inherit" onClick={handleOpen}>
-        <Badge badgeContent={1} color="secondary"> {/* Badge to indicate number of notifications */}
-          <MailIcon sx={{ color: 'brown' }} />
-        </Badge>
-      </IconButton>
-
-      <Menu
-        anchorEl={anchorEl}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        keepMounted
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleClose}>You have a new message</MenuItem> {/* Sample notification */}
-        <MenuItem onClick={handleClose}>Reminder: Volunteer event tomorrow at 10 AM</MenuItem>
-        <MenuItem onClick={handleClose}>New Event Assignment: Pet Shelter</MenuItem>
-        <MenuItem onClick={handleClose}>Event Update: Tree Planting Canceled</MenuItem>
-      </Menu>
-    </>
+    <FullWidthBackground>
+      <div className="flex flex-row">
+      <Sidebar/>
+      <TableContainer >
+        <Typography variant="h6" sx={{ margin: 2 }}>Notifications</Typography>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>Message</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {notifications.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={2} align="center">
+                  No notifications available.
+                </TableCell>
+              </TableRow>
+            ) : (
+              notifications.map((notification) => (
+                <TableRow key={notification.id}>
+                  <TableCell>{new Date(notification.notificationdate).toLocaleString()}</TableCell>
+                  <TableCell>{notification.notificationtext}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+    </FullWidthBackground>
   );
 };
 
