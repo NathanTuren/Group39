@@ -66,7 +66,7 @@ describe("API Routes", () => {
 				preferences: "Some preferences",
 				skills: ["JavaScript", "Node.js"], // Assuming these exist in your `Skills` table
 				availability: ["2024-01-01", "2024-01-02"], // Dates for availability
-				credentialsId: 1
+				credentialsId: 8
 			};
 		
 			const response = await request(app)
@@ -74,7 +74,49 @@ describe("API Routes", () => {
 				.send(profileData);
 			expect(response.body.message).to.equal("Profile data updated successfully.");
 			expect(response.status).to.equal(200);
-			
+		});
+
+		it("should return 404 if the profile does not exist", async () => {
+			const profileData = {
+				fullName: "Jane Doe",
+				address1: "456 Oak St",
+				city: "Shelbyville",
+				stateId: 2,
+				zipCode: "61501",
+				preferences: "volunteer",
+				credentialsId: 999,
+				skills: ["Event Planning"],
+				availability: ["2024-10-10"]
+			};
+	
+			const response = await request(app)
+				.post("/saveProfile")
+				.send(profileData);
+	
+			// Assertions
+			expect(response.status).to.equal(404);
+			expect(response.body.message).to.equal("User not found.");
+		});
+	
+		it("should return 400 if credentialsId is missing", async () => {
+			const profileData = {
+				fullName: "Invalid User",
+				address1: "789 Pine St",
+				city: "Capital City",
+				stateId: 3,
+				zipCode: "62501",
+				preferences: "volunteer",
+				skills: ["Cooking"],
+				availability: ["2024-09-15"]
+			};
+	
+			const response = await request(app)
+				.post("/saveProfile")
+				.send(profileData);
+	
+			// Assertions
+			expect(response.status).to.equal(400);
+			expect(response.body.message).to.equal("Credentials ID is required.");
 		});
 	});
 
