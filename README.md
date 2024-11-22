@@ -26,7 +26,7 @@ To run unit tests, go inside the `client` folder and run `npm test` to run full 
 We use the [Materials UI Component Library](https://mui.com/material-ui/getting-started/) to generate props and components such as Buttons, Inputs, etc. Please reference this library for local frontend development.
 
 ## Adding Custom Email
-We use `nodemailer` to send emails and verify registration. To do this, please make a `.env` file under `server` directory. Here you want to make sure its in the following format:
+We use `nodemailer` to send emails and verify registration. Please also install `npm install dotenv`. To do this, please make a `.env` file under `server` directory. Here you want to make sure its in the following format:
 
 ```plaintext
 GMAIL_USER=your_email@gmail.com
