@@ -13,6 +13,7 @@ import EventsCatalog from './components/eventsCatalog';
 import { VolunteerHistory } from './components/volunteerHistory';
 import { VolunteerHistoryAdmin} from './components/volunteerHistoryAdmin';
 import { Outlet } from 'react-router-dom';
+import {VerificationPending} from './components/login/verification';
 
 const Layout = () => (
     <>
@@ -37,6 +38,7 @@ export const App = () => {
                 <Route path="/events" Component={EventsCatalog}/>
                 <Route path = "/volunteerHistory/:id" Component = {VolunteerHistory}/>
                 <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
+                <Route path = "/verification" Component = {VerificationPending}/>
             </Route>
         </Routes>
         </BrowserRouter>

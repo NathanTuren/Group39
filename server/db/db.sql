@@ -2,7 +2,9 @@ CREATE TABLE UserCredentials(
     id SERIAL PRIMARY KEY,
     userId varchar(100) UNIQUE NOT NULL,
     pass varchar(100) NOT NULL,
-    isAdmin boolean NOT NULL
+    isAdmin boolean NOT NULL,
+    verificationToken varchar(100),
+    verified boolean NOT NULL DEFAULT false
 );
 
 CREATE TABLE States(
@@ -167,8 +169,8 @@ INSERT INTO States (id, stateCode, stateName) VALUES
 (49, 'WI', 'Wisconsin'),
 (50, 'WY', 'Wyoming');
 
-INSERT INTO UserCredentials (userId, pass, isAdmin) VALUES
-('cartertest@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', false); -- pass: password
+INSERT INTO UserCredentials (userId, pass, isAdmin, verificationToken, verified) VALUES
+('cartertest@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', false, NULL, false); -- pass: password
 
 
 INSERT INTO UserProfile (credentialsId, fullName, email, address1, address2, city, stateId, zipCode, preferences, isAdmin) VALUES

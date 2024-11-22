@@ -118,15 +118,27 @@ export const ProfileForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const credentialsId = localStorage.getItem('credentialsId');
-    const userId = localStorage.getItem('userId');
+    const credentialsId = parseInt(localStorage.getItem('credentialsId'), 10);
+    // const userId = parseInt(localStorage.getItem('userId'), 10);
+
+ 
+
+    // Find the corresponding stateId for the selected state code
+    const selectedState = states.find((state) => state.statecode === formData.state);
+    const stateId = selectedState ? selectedState.id : null;
+
+    if (!stateId || stateId === null) {
+        console.error('Invalid state selected.');
+        return;
+    }
+    
     try {
       const response = await fetch('http://localhost:4000/saveProfile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...formData, credentialsId, userId }),
+        body: JSON.stringify({ ...formData, stateId, credentialsId}),
       });
 
       if (response.ok) {
