@@ -497,26 +497,42 @@ router.get('/notifications/:id', async (req, res) => {
     }
 });
 
-router.get('/volunteers/${id}/history'), async (req,res) => {
-    const volunteerID = parseInt(req.params.id);
-    console.log(volunteerID);
-    try {
-        // Query the database for the volunteer
-        if (!volunteerID) {
-            return res.status(404).json({ message: `Volunteer with ID ${volunteerID} not found.` });
-        }
-        const history = await pool.query('SELECT * FROM volunteerHistory WHERE userid = $1;', [volunteerID]);
-        
-        console.log(history);        
+router.get('/volunteers/:id/history', async (req, res) => {
+    const volunteerId = req.params.id;
 
-        return res.json({
-            history
+    try {
+        await pool.query(`
+            UPDATE volunteerhistory
+            SET participation = CASE
+                WHEN eventid IN (
+                    SELECT id 
+                    FROM eventdetails AS e
+                    WHERE e.eventDate < CURRENT_DATE
+                ) THEN 'Participated'
+                ELSE 'Not Participated'
+            END
+            WHERE userid = $1;
+        `, [volunteerId]);
+        
+        const events = await pool.query(`
+            SELECT e.*, vp.participation, array_agg(s.skillname) AS requiredSkills
+            FROM eventdetails e
+            LEFT JOIN volunteerhistory vp ON e.id = vp.eventid AND vp.userid = $1
+            LEFT JOIN eventskills es ON e.id = es.eventid
+            LEFT JOIN skills s ON es.skillid = s.id
+            GROUP BY e.id, vp.participation
+        `, [volunteerId]);
+        console.log(events.rows);
+        res.json({
+            events: events.rows,
         });
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ message: 'Internal server error.' });
+        console.error('Error fetching volunteer history:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-}
+});
+
+
 
 // router.get('/volunteer/:id/match-events', (req, res) => {
 //     const volunteerID = parseInt(req.params.id);
