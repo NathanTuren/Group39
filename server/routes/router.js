@@ -283,7 +283,8 @@ router.post('/volunteerRegister', async (req, res) => {
     const { 
         email, 
         pass,
-        isadmin 
+        isadmin, 
+        id
     } = req.body;
     
     try {
@@ -299,12 +300,19 @@ router.post('/volunteerRegister', async (req, res) => {
         if (result.rows.length > 0) {
             return res.status(409).json({ message: "Email already exists." });
         }
-
+        let credentialResult;
         // Insert into UserCredentials table
-        const credentialResult = await pool.query(
-            'INSERT INTO UserCredentials (userId, pass, isAdmin) VALUES ($1, $2, $3) RETURNING id;', 
-            [email, MD5(pass), isadmin]
-        );
+        if (id){
+            credentialResult = await pool.query(
+                'INSERT INTO UserCredentials (id, userId, pass, isAdmin) VALUES ($1, $2, $3, $4) RETURNING id;', 
+                [id, email, MD5(pass), isadmin]
+            );
+        } else {
+            credentialResult = await pool.query(
+                'INSERT INTO UserCredentials (userId, pass, isAdmin) VALUES ($1, $2, $3) RETURNING id;', 
+                [email, MD5(pass), isadmin]
+            );
+        }
         const credentialsId = credentialResult.rows[0].id;
         const userId = credentialResult.rows[0].userId;
 
