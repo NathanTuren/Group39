@@ -12,6 +12,9 @@ const notifyVolunteersAssignedToEvent = require('../services/volunteerMatching')
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 require('dotenv').config();
+const PDFDocument = require('pdfkit');
+const { createObjectCsvWriter } = require('csv-writer');
+const { Parser } = require('json2csv');
 
 
 // Configure nodemailer
@@ -178,6 +181,109 @@ router.get('/volunteers', async (req, res) => {
 //         res.status(500).json({ message: "Internal server error" });
 //     }
 // });
+
+// API to generate a report (PDF or CSV)
+router.get('/generateReport', async (req, res) => {
+    const { format } = req.query; // `format` can be 'pdf' or 'csv'
+
+    if (!format || !['pdf', 'csv'].includes(format.toLowerCase())) {
+        return res.status(400).json({ message: "Invalid format. Use 'pdf' or 'csv'." });
+    }
+
+    try {
+        // Query for Volunteer Report
+        const volunteerQuery = `
+            SELECT
+                up.fullName AS volunteerName,
+                COALESCE(STRING_AGG(ed.eventName, ', '), 'None') AS events
+            FROM
+                UserProfile up
+            LEFT JOIN
+                UserEvents ue ON up.id = ue.userId
+            LEFT JOIN
+                EventDetails ed ON ue.eventId = ed.id
+            GROUP BY
+                up.fullName;
+        `;
+        const volunteerResult = await pool.query(volunteerQuery);
+
+        // Query for Event Report
+        const eventQuery = `
+            SELECT
+                ed.eventName AS eventName,
+                COALESCE(STRING_AGG(up.fullName, ', '), 'None') AS volunteers
+            FROM
+                EventDetails ed
+            LEFT JOIN
+                UserEvents ue ON ed.id = ue.eventId
+            LEFT JOIN
+                UserProfile up ON ue.userId = up.id
+            GROUP BY
+                ed.eventName;
+        `;
+        const eventResult = await pool.query(eventQuery);
+
+        // Prepare data for report
+        const volunteerData = volunteerResult.rows;
+        const eventData = eventResult.rows;
+
+        if (format.toLowerCase() === 'csv') {
+            // Generate CSV format
+            let csvContent = 'Volunteer Report\n';
+            csvContent += 'Volunteer Name, Events Participated\n';
+            volunteerData.forEach(row => {
+                csvContent += `"${row.volunteername}","${row.events}"\n`;
+            });
+
+            csvContent += '\nEvent Report\n';
+            csvContent += 'Event Name, Assigned Volunteers\n';
+            eventData.forEach(row => {
+                csvContent += `"${row.eventname}","${row.volunteers}"\n`;
+            });
+
+            res.setHeader('Content-Disposition', 'attachment; filename=report.csv');
+            res.setHeader('Content-Type', 'text/csv');
+            res.send(csvContent);
+        } else if (format.toLowerCase() === 'pdf') {
+            // Generate PDF format
+            const PDFDocument = require('pdfkit');
+            const doc = new PDFDocument();
+
+            res.setHeader('Content-Disposition', 'attachment; filename=report.pdf');
+            res.setHeader('Content-Type', 'application/pdf');
+
+            doc.pipe(res);
+
+            // Volunteer Report
+            doc.fontSize(16).text('Volunteer Report', { underline: true });
+            doc.moveDown();
+            doc.fontSize(12);
+            volunteerData.forEach(row => {
+                doc.text(`Volunteer Name: ${row.volunteername}`);
+                doc.text(`Event Participation: ${row.events}`);
+                doc.moveDown();
+            });
+
+            doc.addPage();
+
+            // Event Report
+            doc.fontSize(16).text('Event Report', { underline: true });
+            doc.moveDown();
+            doc.fontSize(12);
+            eventData.forEach(row => {
+                doc.text(`Event Name: ${row.eventname}`);
+                doc.text(`Volunteers: ${row.volunteers}`);
+                doc.moveDown();
+            });
+
+            doc.end();
+        }
+    } catch (error) {
+        console.error('Error generating report:', error.message);
+        res.status(500).json({ message: 'Failed to generate report.' });
+    }
+});
+
 
 
 router.post('/login', async (req, res) => {
