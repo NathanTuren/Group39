@@ -562,13 +562,27 @@ router.post('/saveProfile', async (req, res) => {
 
 // POST request for saving event data
 router.post('/saveEvent', async (req, res) => {
-    const { eventName, eventDescription, location, urgency, eventDate, skills = [] } = req.body;
-    console.log(req.body)
+    const { eventName, eventDescription, location, urgency, eventDate, requiredSkills = [] } = req.body;
+
     try {
         const result = await pool.query('INSERT INTO eventdetails (eventname, eventdescr, eventlocation, urgency, eventdate) VALUES ($1, $2, $3, $4, $5) RETURNING id;', [eventName, eventDescription, location, urgency, eventDate]);
         const eventId = result.rows[0].id;
 
-        for (const skillId of skills) {
+        const skillIds = [];
+        for (const skillName of requiredSkills) {
+        const skillResult = await pool.query(
+            'SELECT id FROM skills WHERE skillname = $1;',
+            [skillName]
+        );
+
+        if (skillResult.rows.length > 0) {
+            skillIds.push(skillResult.rows[0].id);
+        } else {
+            console.error("Skill not found in database.");
+        }
+        }
+
+        for (const skillId of skillIds) {
             await pool.query('INSERT INTO eventskills (eventId, skillId) VALUES ($1, $2);', [eventId, skillId]);
         }
 
@@ -577,7 +591,7 @@ router.post('/saveEvent', async (req, res) => {
         console.error(error.message);
         return res.status(500).json({ message: "Error saving event data" });
     }
-});
+}); 
 
 router.get('/notifications/:id', async (req, res) => {
     console.log(req.params);

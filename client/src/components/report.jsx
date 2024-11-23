@@ -1,5 +1,7 @@
 import React from 'react';
 import { Button, Stack, Typography } from '@mui/material';
+import Sidebar from './ui/sidebar';
+import { FullWidthBackground } from './login/login';
 
 const Report = () => {
     const downloadReport = async (format) => {
@@ -25,23 +27,28 @@ const Report = () => {
     };
 
     return (
-        <Stack spacing={2} alignItems="center" justifyContent="center" style={{ height: '100vh' }}>
-            <Typography variant="h4">Download Reports</Typography>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => downloadReport('pdf')}
-            >
-                Download PDF Report
-            </Button>
-            <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => downloadReport('csv')}
-            >
-                Download CSV Report
-            </Button>
-        </Stack>
+        <div className="flex flex-row space-x-5">
+            <Sidebar/>
+            <FullWidthBackground className="w-full">
+                <Stack className="flex justify-center items-center" spacing={2} style={{ height: '100vh' }}>
+                    <Typography variant="h4">Download Reports</Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => downloadReport('pdf')}
+                    >
+                        Download PDF Report
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => downloadReport('csv')}
+                    >
+                        Download CSV Report
+                    </Button>
+                </Stack>
+            </FullWidthBackground>
+        </div>
     );
 };
 
