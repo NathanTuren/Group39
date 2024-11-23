@@ -5,20 +5,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Sidebar from './ui/sidebar';
-
+import { FullWidthBackground } from './login/login';
 // Custom container for event cards
 const EventCatalogContainer = styled('div')({
   maxWidth: '1200px',
   width: '80%',
   marginTop: '20px',
-});
-
-const FullWidthBackground = styled('div')({
-  backgroundColor: 'rgb(249, 245, 235)',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
 });
 
 const FormContainer = styled('div')({

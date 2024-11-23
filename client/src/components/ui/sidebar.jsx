@@ -4,6 +4,7 @@ import { MdOutlineSpaceDashboard, MdHistory, MdEvent } from "react-icons/md";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { AiOutlineUser } from "react-icons/ai";
 import { RiSettings4Line } from "react-icons/ri";
+import { FaRegClipboard } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import '../../app.css';
 
@@ -21,7 +22,9 @@ const Sidebar = (role) => {
   const roleSpecificMenus = role === "admin"
       ? [
         { name: "Volunteer History", link: "/volunteerHistoryAdmin", icon: MdHistory },
-        { name: "Event Management", link: "/events", icon: MdEvent},]
+        { name: "Event Management", link: "/events", icon: MdEvent},
+        { name: "Reports", link: "/report", icon: FaRegClipboard},
+      ]
       : [{ name: "My History", link: `/volunteerHistory/${userId}`, icon: MdHistory },
         { name: "Dashboard", link: "/userDashboard", icon: MdOutlineSpaceDashboard },
         { name: "Notifications", link: `/notifications/${userId}`, icon: IoNotificationsOutline },
