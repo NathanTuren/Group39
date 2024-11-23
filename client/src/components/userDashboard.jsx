@@ -1,21 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Grid, Button } from '@mui/material';
 import { styled } from '@mui/system';
 
-// Custom background container
-const FullWidthBackground = styled('div')({
-  backgroundColor: 'rgb(249, 245, 235)',
-  minHeight: '100vh',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: '20px',
-});
+import { FullWidthBackground } from './login/login';
+import Sidebar from './ui/sidebar';
 
 // Custom container for event cards
 const EventCatalogContainer = styled('div')({
   maxWidth: '1200px',
-  width: '100%',
+  width: '80%',
 });
 
 const events = [
@@ -58,29 +51,59 @@ const events = [
 ];
 
 export const UserDashboard = () => {
+  const [events, setEvent] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const userId = localStorage.getItem('userId');
+      try {
+        const response = await fetch(`http://localhost:4000/events`, {
+          method: 'GET',
+        });
+        console.log(response);
+        if (response.ok) {
+          const eventsData = await response.json();
+          setEvent(eventsData);
+        } else {
+          console.error('Error fetching events:', await response.json());
+          setError('Failed to fetch events');
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        setError(`Request failed: ${error.message}`);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <FullWidthBackground>
-      <EventCatalogContainer>
+      <div className="flex flex-row">
+      <Sidebar/>
+      <EventCatalogContainer className="p-5 pl-10 flex flex-col justify-center items-center">
+        <div className="flex flex-wrap justify-center items-center w-full">
         <Typography variant="h4" align="center" gutterBottom>
           Available Events
         </Typography>
-
+        
         <Grid container spacing={3}>
           {events.map((event) => (
             <Grid item xs={12} sm={6} md={4} key={event.id}>
-              <Card>
+              <Card className="rounded-lg">
                 <CardContent>
                   <Typography variant="h5" gutterBottom>
-                    {event.name}
+                    {event.eventname}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Date:</strong> {event.date}
+                    <strong>Date:</strong> {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(event.eventdate))}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    <strong>Location:</strong> {event.location}
+                    <strong>Location:</strong> {event.eventlocation}
                   </Typography>
                   <Typography variant="body1" style={{ marginTop: '10px' }}>
-                    {event.description}
+                    {event.eventdescr}
                   </Typography>
                   <Button
                     variant="contained"
@@ -94,7 +117,9 @@ export const UserDashboard = () => {
             </Grid>
           ))}
         </Grid>
+        </div>
       </EventCatalogContainer>
+      </div>
     </FullWidthBackground>
   );
 };

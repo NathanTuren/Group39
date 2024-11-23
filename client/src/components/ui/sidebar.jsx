@@ -7,15 +7,21 @@ import { RiSettings4Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
 import '../../app.css';
 
-const Sidebar = () => {
-    const menus = [
-        { name: "Dashboard", link: "/", icon: MdOutlineSpaceDashboard},
-        { name: "Event Management", link: "/", icon: MdEvent},
-        { name: "Volunteer History", link: "/", icon: MdHistory},
-        { name: "Notifications", link: "/", icon: IoNotificationsOutline},
-        { name: "User Settings", link: "/", icon: RiSettings4Line},
-        { name: "Logout", link: "/", icon: AiOutlineUser, margin: true},
-    ];
+const Sidebar = (role) => {
+  const commonMenus = [
+      { name: "Dashboard", link: "/userDashboard", icon: MdOutlineSpaceDashboard },
+      { name: "Notifications", link: "/notifications", icon: IoNotificationsOutline },
+      { name: "User Settings", link: "/accountSettings", icon: RiSettings4Line },
+      { name: "Logout", link: "/", icon: AiOutlineUser, margin: true },
+  ];
+  role="admin";
+  const roleSpecificMenus = role === "admin"
+      ? [
+        { name: "Volunteer History", link: "/volunteerHistoryAdmin", icon: MdHistory },
+        { name: "Event Management", link: "/eventManagement", icon: MdEvent},]
+      : [{ name: "My History", link: "/volunteerHistory", icon: MdHistory }];
+
+  const menus = [...roleSpecificMenus, ...commonMenus];
 
     const [open, setOpen] = useState(true);
 

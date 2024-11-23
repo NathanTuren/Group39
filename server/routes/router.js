@@ -7,7 +7,7 @@ const events = require('../db/events');
 const profiles = require('../db/profileData'); // Import the profiles file
 const fs = require('fs');
 const path = require('path');
-const matchVolunteerToEvents = require('../services/volunteerMatching'); 
+const matchVolunteerToEvents = require('../services/volunteerMatching');
 const notifyVolunteersAssignedToEvent = require('../services/volunteerMatching');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
@@ -98,28 +98,29 @@ router.get('/verifyEmail', async (req, res) => {
 });
 
 
-router.get('/volunteers', async(req, res) => {
+router.get('/volunteers', async (req, res) => {
     try {
         const query = `
             SELECT 
                 u.*, 
-                s.skillName, 
-                a.availabilityDate,
+                ARRAY_AGG(DISTINCT s.skillName) AS skills, 
+                ARRAY_AGG(DISTINCT a.availabilityDate) AS availabilityDates,
                 c.pass
             FROM 
-                UserProfile AS u, 
-                UserSkills AS us,
-                Skills AS s,
-                UserAvailability AS a,
-                UserCredentials AS c
-            WHERE
-                u.id = us.userId AND
-                us.skillId = s.id AND
-                u.id = a.userId AND
-                u.credentialsId = c.id;
+                UserProfile AS u
+            JOIN 
+                UserSkills AS us ON u.id = us.userId
+            JOIN 
+                Skills AS s ON us.skillId = s.id
+            JOIN 
+                UserAvailability AS a ON u.id = a.userId
+            JOIN 
+                UserCredentials AS c ON u.credentialsId = c.id
+            GROUP BY 
+                u.id, c.pass;
         `;
         const volunteers = await pool.query(query);
-        res.json(volunteers.rows);
+        return res.json(volunteers.rows);
     } catch (error) {
         console.error(error.message);
     }
@@ -228,27 +229,30 @@ router.post('/login', async (req, res) => {
 });
 
 
-router.get('/events', async(req, res) => {
+router.get('/events', async (req, res) => {
     try {
         const query = `
             SELECT 
-                e.*, s.skillName
+                e.*,
+                ARRAY_AGG(s.skillName) AS skills
             FROM 
-                EventDetails AS e,
-                EventSkills AS es,
-                Skills AS s
-            WHERE
-                e.id = es.eventId AND
-                es.skillId = s.id;
+                EventDetails AS e
+            JOIN 
+                EventSkills AS es ON e.id = es.eventId
+            JOIN 
+                Skills AS s ON es.skillId = s.id
+            GROUP BY 
+                e.id;
         `;
         const events = await pool.query(query);
-        res.json(events.rows);
+        console.log(events);
+        return res.json(events.rows);
     } catch (error) {
         console.error(error.message);
     }
 })
 
-router.get('/skills', async(req, res) => {
+router.get('/skills', async (req, res) => {
     try {
         const query = `
             SELECT 
@@ -263,7 +267,7 @@ router.get('/skills', async(req, res) => {
     }
 })
 
-router.get('/states', async(req, res) => {
+router.get('/states', async (req, res) => {
     try {
         const query = `
             SELECT 
@@ -278,15 +282,36 @@ router.get('/states', async(req, res) => {
     }
 })
 
+router.get('/notifications', async (req, res) => {
+    try {
+        const { userId } = req.query;  // Get userId from query parameters
+
+        const query = `
+            SELECT 
+                n.*
+            FROM 
+                Notifications AS n
+            WHERE
+                n.userId = $1; 
+        `;
+        
+        const notifications = await pool.query(query, [userId]); 
+        return res.json(notifications.rows);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // POST request for registering a new volunteer
 router.post('/volunteerRegister', async (req, res) => {
-    const { 
-        email, 
+    const {
+        email,
         pass,
         isadmin, 
         id
     } = req.body;
-    
+
     try {
         // Check that email and password are provided
         if (!email || !pass) {
@@ -322,7 +347,7 @@ router.post('/volunteerRegister', async (req, res) => {
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
             [credentialsId, '', email, '', '', 1, '', isadmin]
         );
-        
+
         // const userId = profileResult.rows[0].id;
 
         res.status(201).json({ message: "Registration Successful", userId, credentialsId });
@@ -431,20 +456,44 @@ router.post('/saveProfile', async (req, res) => {
 
 // POST request for saving event data
 router.post('/saveEvent', async (req, res) => {
-    const { eventName, eventDescr, eventLocation, urgency, eventDate, skills = [] } = req.body;
-
+    const { eventName, eventDescription, location, urgency, eventDate, skills = [] } = req.body;
+    console.log(req.body)
     try {
-        const result = await pool.query('INSERT INTO EventDetails (eventName, eventDescr, eventLocation, urgency, eventDate) VALUES ($1, $2, $3, $4, $5) RETURNING id;', [eventName, eventDescr, eventLocation, urgency, eventDate]);
+        const result = await pool.query('INSERT INTO eventdetails (eventname, eventdescr, eventlocation, urgency, eventdate) VALUES ($1, $2, $3, $4, $5) RETURNING id;', [eventName, eventDescription, location, urgency, eventDate]);
         const eventId = result.rows[0].id;
 
         for (const skillId of skills) {
-            await pool.query('INSERT INTO EventSkills (eventId, skillId) VALUES ($1, $2);', [eventId, skillId]);
+            await pool.query('INSERT INTO eventskills (eventId, skillId) VALUES ($1, $2);', [eventId, skillId]);
         }
 
-        res.status(201).json({ message: "Event data saved successfully", eventId });
+        return res.status(201).json({ message: "Event data saved successfully", eventId });
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ message: "Error saving event data" });
+        return res.status(500).json({ message: "Error saving event data" });
+    }
+});
+
+router.get('/notifications/:id', async (req, res) => {
+    console.log(req.params);
+    const userId = parseInt(req.params.id);  
+    
+    try {
+        const notifications = await pool.query(`
+            SELECT 
+                n.id, 
+                n.notificationtext, 
+                n.notificationdate, 
+                n.userid 
+            FROM 
+                Notifications n
+            WHERE 
+                n.userid = $1 
+        `, [userId]);
+
+        return res.json(notifications.rows);  
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 
@@ -483,30 +532,32 @@ router.get('/volunteers/:id/history', async (req, res) => {
     }
 });
 
-router.get('/volunteer/:id/match-events', (req, res) => {
-    const volunteerID = parseInt(req.params.id);
 
-    const volunteer = volunteers.find(v => v.id === volunteerID);
 
-    if (!volunteer) {
-        return res.status(404).json({ message: `Volunteer with ID ${volunteerID} not found.` });
-    }
-    console.log(volunteer)
-    const matchedEvents = matchVolunteerToEvents(volunteer, events);
+// router.get('/volunteer/:id/match-events', (req, res) => {
+//     const volunteerID = parseInt(req.params.id);
 
-    return res.json({
-        volunteerName: volunteer.name,
-        matchingEvents: matchedEvents
-    });
-});
+//     const volunteer = volunteers.find(v => v.id === volunteerID);
+
+//     if (!volunteer) {
+//         return res.status(404).json({ message: `Volunteer with ID ${volunteerID} not found.` });
+//     }
+//     console.log(volunteer)
+//     const matchedEvents = matchVolunteerToEvents(volunteer, events);
+
+//     return res.json({
+//         volunteerName: volunteer.name,
+//         matchingEvents: matchedEvents
+//     });
+// });
 router.get('/volunteer/:id/match-events', async (req, res) => {
     const volunteerID = parseInt(req.params.id);
-
+    console.log(volunteerID);
     try {
         // Query the database for the volunteer
         const volunteerResult = await pool.query('SELECT * FROM UserProfile WHERE id = $1;', [volunteerID]);
         const volunteer = volunteerResult.rows[0];
-
+        console.log(volunteer);
         if (!volunteer) {
             return res.status(404).json({ message: `Volunteer with ID ${volunteerID} not found.` });
         }
@@ -528,7 +579,7 @@ router.get('/volunteer/:id/match-events', async (req, res) => {
 router.post('/volunteer/:volunteerID/notify', async (req, res) => {
     const volunteerID = parseInt(req.params.volunteerID);
 
-    const eventID = req.body.eventId; 
+    const eventID = req.body.eventId;
     const eventResult = await pool.query('SELECT * FROM EventDetails WHERE id = $1;', [eventID]);
     const event = eventResult.rows[0];
 
@@ -583,6 +634,81 @@ router.post('/event/:eventId/send-reminder', (req, res) => {
         notifiedVolunteers: notifiedVolunteers
     });
 });
+
+router.post('/updateProfile', async (req, res) => {
+    const { userId, fullName, address1, address2, city, state, zipCode, skills, preferences, availability } = req.body;
+  
+    try {
+      await pool.query('BEGIN');
+  
+      // Update the basic user profile
+      const updateProfileQuery = `
+        UPDATE UserProfile
+        SET fullname = $1, address1 = $2, address2 = $3, city = $4, state = $5, zipcode = $6, preferences = $7
+        WHERE id = $8;
+      `;
+      await pool.query(updateProfileQuery, [fullName, address1, address2, city, state, zipCode, preferences, userId]);
+  
+      // Update skills
+      const deleteSkillsQuery = `DELETE FROM UserSkills WHERE userId = $1;`;
+      await pool.query(deleteSkillsQuery, [userId]);
+  
+      const insertSkillsQuery = `
+        INSERT INTO UserSkills (userId, skillId)
+        VALUES ($1, (SELECT id FROM Skills WHERE skillName = $2))
+      `;
+      for (const skill of skills) {
+        await pool.query(insertSkillsQuery, [userId, skill]);
+      }
+  
+      // Update availability
+      const deleteAvailabilityQuery = `DELETE FROM UserAvailability WHERE userId = $1;`;
+      await pool.query(deleteAvailabilityQuery, [userId]);
+  
+      const insertAvailabilityQuery = `INSERT INTO UserAvailability (userId, availabilitydate) VALUES ($1, $2);`;
+      for (const date of availability) {
+        await pool.query(insertAvailabilityQuery, [userId, date]);
+      }
+  
+      await pool.query('COMMIT'); 
+      return res.json({ success: true, message: "Profile successfully updated." });
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      console.error('Error updating profile:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
+
+  router.get('/userProfile/:userId', async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const query = `
+        SELECT u.fullname, u.address1, u.address2, u.city, u.state, u.zipcode, 
+               STRING_AGG(s.skillname, ',') AS skills, 
+               u.preferences,
+               ARRAY_AGG(ua.availabilitydate) AS availability
+        FROM UserProfile AS u
+        LEFT JOIN UserSkills AS us ON u.id = us.userId
+        LEFT JOIN Skills AS s ON us.skillId = s.id
+        LEFT JOIN UserAvailability AS ua ON u.id = ua.userId
+        WHERE u.id = $1
+        GROUP BY u.id;
+      `;
+      const result = await pool.query(query, [userId]);
+  
+      if (result.rows.length > 0) {
+        res.json(result.rows[0]);
+      } else {
+        res.status(404).json({ error: 'User profile not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
 
 module.exports = router
 

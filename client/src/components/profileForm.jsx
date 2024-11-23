@@ -144,7 +144,7 @@ export const ProfileForm = () => {
       if (response.ok) {
         const result = await response.json();
         console.log('Profile saved:', result);
-        navigate('/volunteerMatchingForm');
+        navigate('/userDashboard');
       } else {
         console.error('Error saving profile:', await response.json());
       }

@@ -14,6 +14,7 @@ import { VolunteerHistory } from './components/volunteerHistory';
 import { VolunteerHistoryAdmin} from './components/volunteerHistoryAdmin';
 import { Outlet } from 'react-router-dom';
 import {VerificationPending} from './components/login/verification';
+import Notifications from './components/notifications';
 
 const Layout = () => (
     <>
@@ -39,6 +40,7 @@ export const App = () => {
                 <Route path = "/volunteerHistory/:id" Component = {VolunteerHistory}/>
                 <Route path = "/volunteerHistoryAdmin" Component = {VolunteerHistoryAdmin}/>
                 <Route path = "/verification" Component = {VerificationPending}/>
+                <Route path="/notifications/:id" Component={Notifications}/>
             </Route>
         </Routes>
         </BrowserRouter>

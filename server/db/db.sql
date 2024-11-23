@@ -1,4 +1,4 @@
-CREATE TABLE UserCredentials(
+CREATE TABLE IF NOT EXISTS UserCredentials(
     id SERIAL PRIMARY KEY,
     userId varchar(100) UNIQUE NOT NULL,
     pass varchar(100) NOT NULL,
@@ -7,13 +7,13 @@ CREATE TABLE UserCredentials(
     verified boolean NOT NULL DEFAULT false
 );
 
-CREATE TABLE States(
+CREATE TABLE IF NOT EXISTS States(
     id int PRIMARY KEY,
     stateCode varchar(2) NOT NULL,
     stateName varchar(30) NOT NULL
 );
 
-CREATE TABLE UserProfile(
+CREATE TABLE IF NOT EXISTS UserProfile(
     id SERIAL PRIMARY KEY,
     credentialsId int NOT NULL,
     fullName varchar(50) NOT NULL,
@@ -30,12 +30,12 @@ CREATE TABLE UserProfile(
     FOREIGN KEY (credentialsId) REFERENCES UserCredentials(id)
 );
 
-CREATE TABLE Skills(
+CREATE TABLE IF NOT EXISTS Skills(
     id SERIAL PRIMARY KEY,
     skillName varchar(100) NOT NULL
 );
 
-CREATE TABLE UserSkills(
+CREATE TABLE IF NOT EXISTS UserSkills(
     userId int NOT NULL,
     skillId int NOT NULL,
     PRIMARY KEY (userId, skillId),
@@ -43,14 +43,14 @@ CREATE TABLE UserSkills(
     FOREIGN KEY (skillId) REFERENCES Skills(id)
 );
 
-CREATE TABLE UserAvailability(
+CREATE TABLE IF NOT EXISTS UserAvailability(
     userId int NOT NULL,
     availabilityDate date NOT NULL,
     PRIMARY KEY (userId, availabilityDate),
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
 
-CREATE TABLE EventDetails(
+CREATE TABLE IF NOT EXISTS EventDetails(
     id SERIAL PRIMARY KEY,
     eventName varchar(100) NOT NULL,
     eventDescr text NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE EventDetails(
     eventDate DATE NOT NULL
 );
 
-CREATE TABLE EventSkills(
+CREATE TABLE IF NOT EXISTS EventSkills(
     eventId int NOT NULL,
     skillId int NOT NULL,
     PRIMARY KEY (eventId, skillId),
@@ -67,7 +67,7 @@ CREATE TABLE EventSkills(
     FOREIGN KEY (skillId) REFERENCES Skills(id)
 );
 
-CREATE TABLE VolunteerHistory(
+CREATE TABLE IF NOT EXISTS VolunteerHistory(
     eventId int NOT NULL,
     userId int NOT NULL,
     participation varchar(20) NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE VolunteerHistory(
     FOREIGN KEY (eventId) REFERENCES EventDetails(id),
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
-CREATE TABLE Inbox (
+CREATE TABLE IF NOT EXISTS Inbox (
     id SERIAL PRIMARY KEY,
     userId int NOT NULL,
     senderId int,  -- Optional sender reference, can be null if sent by the system
@@ -87,7 +87,7 @@ CREATE TABLE Inbox (
     FOREIGN KEY (senderId) REFERENCES UserProfile(id)
 );
 
-CREATE TABLE Notifications (
+CREATE TABLE IF NOT EXISTS Notifications (
     id SERIAL PRIMARY KEY,
     userId int NOT NULL,
     notificationText text NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE Notifications (
     FOREIGN KEY (userId) REFERENCES UserProfile(id)
 );
 
-CREATE TABLE UserEvents (
+CREATE TABLE IF NOT EXISTS UserEvents (
     id SERIAL PRIMARY KEY,
     userId int NOT NULL,
     eventId int NOT NULL,

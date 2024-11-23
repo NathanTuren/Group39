@@ -6,16 +6,8 @@ import {
 import { Card, CardContent, Grid, Button } from '@mui/material';
 
 import { styled } from '@mui/system';
-
-// Full width background that covers the screen
-const FullWidthBackground = styled('div')({
-  backgroundColor: 'rgb(249, 245, 235)', // Off-white background to match the style
-  height: '100vh',
-  width: '100vw',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-});
+import Sidebar from './ui/sidebar';
+import { FullWidthBackground } from './login/login';
 
 // Form container without a box, similar to the login style
 const EventCatalogContainer = styled('div')({
@@ -26,55 +18,62 @@ const EventCatalogContainer = styled('div')({
 export const VolunteerHistoryAdmin = () => {
   const [volunteers, setVolunteerData] = useState([]);
   const fetchVolunteers = async () => {
-    try {
-      const res = await fetch('http://localhost:4000/volunteers'); // fetch the appropriate API in this case we do a get to /volunteers
-      const data = await res.json();
-      const uniqueVolunteers = Array.from(
-        new Map(data.map(volunteer => [volunteer.id, volunteer])).values()
-      );
-      setVolunteerData(uniqueVolunteers);
-      console.log(uniqueVolunteers);
-    } catch (err) {
-      console.error('Error fetching volunteer data:', err);
-    }
+      try {
+          const res = await fetch('http://localhost:4000/volunteers');
+          const data = await res.json();
+          const uniqueVolunteers = Array.from(
+              new Map(data.map(volunteer => [volunteer.id, volunteer])).values()
+          );
+          setVolunteerData(uniqueVolunteers);
+      } catch (err) {
+          console.error('Error fetching volunteer data:', err);
+      }
   };
 
   useEffect(() => {
-    fetchVolunteers();
+      fetchVolunteers();
   }, []);
 
   return (
-    <FullWidthBackground>
-      <EventCatalogContainer>
-        <Typography variant="h4" align="center" gutterBottom>
-          Volunteer History Log
-        </Typography>
-
-        <Grid container spacing={3}>
-          {volunteers.map((volunteer) => (
-            <Grid item xs={12} sm={6} md={4} key={volunteer.id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h5" gutterBottom>
-                    {volunteer.fullname}
+      <FullWidthBackground>
+          <div className="flex flex-row">
+              <Sidebar />
+              <EventCatalogContainer className="mt-5 px-5">
+                  <Typography variant="h4" align="center" gutterBottom>
+                      Volunteer History Log
                   </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    <strong>Email:</strong> {volunteer.email}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    href={`/volunteerHistory/${volunteer.id}`}
-                    style={{ marginTop: '15px', backgroundColor: 'brown' }}
-                  >
-                    Volunteer History
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </EventCatalogContainer>
-    </FullWidthBackground>
+                  {volunteers.length === 0 ? (
+                      <Typography variant="h6" align="center" color="textSecondary">
+                          No volunteers found.
+                      </Typography>
+                  ) : (
+                      <Grid container spacing={3}>
+                          {volunteers.map((volunteer) => (
+                              <Grid item xs={12} sm={6} md={4} key={volunteer.id}>
+                                  <Card>
+                                      <CardContent>
+                                          <Typography variant="h5" gutterBottom>
+                                              {volunteer.fullname}
+                                          </Typography>
+                                          <Typography variant="body2" color="textSecondary">
+                                              <strong>Email:</strong> {volunteer.email}
+                                          </Typography>
+                                          <Button
+                                              variant="contained"
+                                              fullWidth
+                                              href={`/volunteerHistory/${volunteer.id}`}
+                                              style={{ marginTop: '15px', backgroundColor: 'brown' }}
+                                          >
+                                              View Volunteer History
+                                          </Button>
+                                      </CardContent>
+                                  </Card>
+                              </Grid>
+                          ))}
+                      </Grid>
+                  )}
+              </EventCatalogContainer>
+          </div>
+      </FullWidthBackground>
   );
 };
