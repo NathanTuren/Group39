@@ -49,6 +49,22 @@ const EventsCatalog = () => {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false); // State to toggle form visibility
 
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/events');
+      if (response.ok) {
+        const eventsData = await response.json();
+        setEvents(eventsData);
+      } else {
+        console.error('Error fetching events:', await response.json());
+        setError('Failed to fetch events');
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setError(`Request failed: ${error.message}`);
+    }
+  };
+
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -61,22 +77,6 @@ const EventsCatalog = () => {
         }
       } catch (error) {
         console.error('Fetch error:', error);
-      }
-    };
-
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('http://localhost:4000/events');
-        if (response.ok) {
-          const eventsData = await response.json();
-          setEvents(eventsData);
-        } else {
-          console.error('Error fetching events:', await response.json());
-          setError('Failed to fetch events');
-        }
-      } catch (error) {
-        console.error('Fetch error:', error);
-        setError(`Request failed: ${error.message}`);
       }
     };
 
@@ -117,6 +117,8 @@ const EventsCatalog = () => {
         urgency: '',
         eventDate: null,
       });
+      fetchEvents();
+      setShowForm(false);
     })
     .catch((error) => {
       console.error('Error:', error);
