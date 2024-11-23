@@ -8,18 +8,24 @@ import { Link } from "react-router-dom";
 import '../../app.css';
 
 const Sidebar = (role) => {
+  const userId = localStorage.getItem('userId');
+  role = localStorage.getItem('role');
+
+  console.log(userId);
+  console.log(role);
   const commonMenus = [
-      { name: "Dashboard", link: "/userDashboard", icon: MdOutlineSpaceDashboard },
-      { name: "Notifications", link: "/notifications", icon: IoNotificationsOutline },
-      { name: "User Settings", link: "/accountSettings", icon: RiSettings4Line },
+      // { name: "User Settings", link: "/accountSettings", icon: RiSettings4Line },
       { name: "Logout", link: "/", icon: AiOutlineUser, margin: true },
   ];
-  role="admin";
+  //role="admin";
   const roleSpecificMenus = role === "admin"
       ? [
         { name: "Volunteer History", link: "/volunteerHistoryAdmin", icon: MdHistory },
-        { name: "Event Management", link: "/eventManagement", icon: MdEvent},]
-      : [{ name: "My History", link: "/volunteerHistory", icon: MdHistory }];
+        { name: "Event Management", link: "/events", icon: MdEvent},]
+      : [{ name: "My History", link: `/volunteerHistory/${userId}`, icon: MdHistory },
+        { name: "Dashboard", link: "/userDashboard", icon: MdOutlineSpaceDashboard },
+        { name: "Notifications", link: `/notifications/${userId}`, icon: IoNotificationsOutline },
+      ];
 
   const menus = [...roleSpecificMenus, ...commonMenus];
 

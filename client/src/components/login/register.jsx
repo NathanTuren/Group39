@@ -44,6 +44,7 @@ export const Register = () => {
         // Successful registration, navigateRoute to profile form
         localStorage.setItem('credentialsId', data.credentialsId);
         localStorage.setItem('userId', data.userId);
+        localStorage.setItem('role', selectedRole);
         // Send verification email after successful registration
         const emailResponse = await fetch('http://localhost:4000/sendVerificationEmail', {
         method: 'POST',

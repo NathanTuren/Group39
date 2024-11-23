@@ -11,9 +11,11 @@ export const Notifications = ({ userId }) => {
   // Fetch notifications from the API when the component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
+      const userId = localStorage.getItem('userId');
       try {
         const response = await fetch(`http://localhost:4000/notifications/${userId}`);
         const data = await response.json();
+        console.log(data);
         setNotifications(data); 
       } catch (error) {
         console.error('Error fetching notifications:', error);

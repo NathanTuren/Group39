@@ -66,7 +66,7 @@ describe("API Routes", () => {
 				preferences: "Some preferences",
 				skills: ["JavaScript", "Node.js"], // Assuming these exist in your `Skills` table
 				availability: ["2024-01-01", "2024-01-02"], // Dates for availability
-				credentialsId: 8
+				credentialsId: 1
 			};
 		
 			const response = await request(app)
