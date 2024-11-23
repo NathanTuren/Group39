@@ -44,14 +44,15 @@ export const Login = () => {
       });
 
       const data = await response.json();
-
+      console.log(data);
       if (response.ok) {
         localStorage.setItem('credentialsId', data.userId); // Store user ID or token as needed
-
+        localStorage.setItem('userId', data.userId);
+        localStorage.setItem('role', selectedRole);
         setError(null); // Clear errors
 
         if (selectedRole === 'admin' && data.isAdmin) { // If admin, navigate to admin dashboard
-          navigate('/volunteerMatchingForm'); // Admin dashboard
+          navigate('/userDashboard'); // Admin dashboard
         } else if (selectedRole === 'user' && !data.isAdmin) { // if user, navigate to user dashaboard
           navigate('/userDashboard'); // Regular user dashboard
         } else {
